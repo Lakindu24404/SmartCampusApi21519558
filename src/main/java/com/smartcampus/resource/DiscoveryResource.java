@@ -34,7 +34,7 @@ public class DiscoveryResource {
         response.put("version",     "1.0");
         response.put("description", "RESTful API for managing campus rooms and IoT sensors");
         response.put("contact",     "admin@smartcampus.ac.uk");
-        response.put("resources",   resources);
+        response.put("_links",      resources);
 
         return Response.ok(response).build();
     }
