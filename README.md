@@ -42,6 +42,10 @@ This project is a JAX-RS RESTful API developed for the University of Westminster
    - `student` (password: `password123`) -> Role: USER
    - Sample rooms and sensors.
 
+### 🔍 Interactive Testing Tools
+- **Swagger UI**: Access the interactive documentation at `http://localhost:8080/swagger-ui/` once the server is running. You can test all endpoints directly from your browser.
+- **Postman Collection**: A complete collection for testing is available in the root directory: `SmartCampusAPI.postman_collection.json`. Simply import it into Postman to start testing.
+
 ---
 
 ## 3. API Documentation & Sample Usage
