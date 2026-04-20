@@ -1,3 +1,4 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.service;
 
 import com.smartcampus.model.User;
@@ -11,26 +12,26 @@ import javax.ws.rs.NotAuthorizedException;
 import java.security.Key;
 import java.util.Date;
 
-public class AuthService {
+public class AuthService { // logic for login and user registration
 
     private final UserRepository userRepository = new UserRepository();
     
-    // In a real app, this should be in an environment variable or config file
     private static final Key KEY = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     public String authenticate(String username, String password) {
         User user = userRepository.findByUsername(username);
 
+        // check password
         if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
-            throw new NotAuthorizedException("Invalid username or password");
+            throw new NotAuthorizedException("Bad login");
         }
 
-        // Issue JWT token
+        // build jwt
         return Jwts.builder()
                 .setSubject(username)
                 .claim("role", user.getRole())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) // 1 hour
+                .setExpiration(new Date(System.currentTimeMillis() + 3600000)) 
                 .signWith(KEY)
                 .compact();
     }
@@ -40,6 +41,7 @@ public class AuthService {
     }
 
     public void register(String username, String password, String role) {
+        // hash password before saving
         String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         User user = new User(username, hashedPassword, role);
         userRepository.save(user);

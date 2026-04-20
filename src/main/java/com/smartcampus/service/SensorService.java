@@ -1,3 +1,4 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.service;
 
 import com.smartcampus.model.Sensor;
@@ -7,7 +8,7 @@ import com.smartcampus.model.Room;
 import javax.ws.rs.NotFoundException;
 import java.util.List;
 
-public class SensorService {
+public class SensorService { // handles logic for iot sensors
 
     private final SensorRepository sensorRepository = new SensorRepository();
     private final RoomRepository roomRepository = new RoomRepository();
@@ -21,15 +22,15 @@ public class SensorService {
     }
 
     public void createSensor(Sensor sensor) {
-        // Validate room exists
+        // room must exist to add sensor
         Room room = roomRepository.findById(sensor.getRoomId());
         if (room == null) {
-            throw new NotFoundException("Room with ID " + sensor.getRoomId() + " not found");
+            throw new NotFoundException("no room found");
         }
         
         sensorRepository.save(sensor);
         
-        // Update room's sensor list
+        // link sensor to room
         room.addSensorId(sensor.getId());
         roomRepository.save(room);
     }
@@ -38,7 +39,7 @@ public class SensorService {
         Sensor sensor = sensorRepository.findById(id);
         if (sensor == null) return;
         
-        // Remove from room
+        // remove link from room
         Room room = roomRepository.findById(sensor.getRoomId());
         if (room != null) {
             room.removeSensorId(id);

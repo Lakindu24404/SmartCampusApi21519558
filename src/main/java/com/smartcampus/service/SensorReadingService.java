@@ -1,3 +1,4 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.service;
 
 import com.smartcampus.model.SensorReading;
@@ -8,15 +9,15 @@ import javax.ws.rs.NotFoundException;
 import java.util.List;
 import java.util.UUID;
 
-public class SensorReadingService {
+public class SensorReadingService { // handles logic for recording history
 
     private final SensorReadingRepository readingRepository = new SensorReadingRepository();
     private final SensorRepository sensorRepository = new SensorRepository();
 
     public List<SensorReading> getReadingsBySensorId(String sensorId) {
-        // Validate sensor exists
+        // sensor must exist
         if (sensorRepository.findById(sensorId) == null) {
-            throw new NotFoundException("Sensor with ID " + sensorId + " not found");
+            throw new NotFoundException("sensor missing");
         }
         return readingRepository.findBySensorId(sensorId);
     }
@@ -24,14 +25,14 @@ public class SensorReadingService {
     public void addReading(String sensorId, double value) {
         Sensor sensor = sensorRepository.findById(sensorId);
         if (sensor == null) {
-            throw new NotFoundException("Sensor with ID " + sensorId + " not found");
+            throw new NotFoundException("sensor missing");
         }
 
-        // Update sensor's current value
+        // update the sensor's current value
         sensor.setCurrentValue(value);
         sensorRepository.save(sensor);
 
-        // Record historical reading
+        // log the historical reading
         SensorReading reading = new SensorReading(
                 UUID.randomUUID().toString(),
                 System.currentTimeMillis(),

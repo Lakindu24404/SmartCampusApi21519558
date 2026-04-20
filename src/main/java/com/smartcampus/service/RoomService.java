@@ -1,12 +1,14 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.service;
 
 import com.smartcampus.model.Room;
 import com.smartcampus.repository.RoomRepository;
-import com.smartcampus.exception.RoomNotEmptyException;
+import com.smartcampus.exception.mapper.RoomNotEmptyExceptionMapper; // Note: using mapper class name if needed or exception
+import com.smartcampus.exception.RoomNotEmptyException; // assuming this exists or I'll check
 
 import java.util.List;
 
-public class RoomService {
+public class RoomService { // handles logic for campus rooms
 
     private final RoomRepository roomRepository = new RoomRepository();
 
@@ -26,7 +28,7 @@ public class RoomService {
         Room room = roomRepository.findById(roomId);
         if (room == null) return;
 
-        // Business Logic: A room with active sensors cannot be deleted.
+        // can't delete rooms with sensors in them
         if (!room.getSensorIds().isEmpty()) {
             throw new RoomNotEmptyException(roomId);
         }
