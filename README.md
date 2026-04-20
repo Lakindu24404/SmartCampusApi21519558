@@ -23,7 +23,7 @@ This implementation strictly follows coursework requirements:
 
 ```bash
 # Clone repository
-git clone <your-repo-link>
+git clone https://github.com/Lakindu24404/SmartCampusApi21519558.git
 
 # Navigate
 cd SmartCampusApi21519558
@@ -112,8 +112,8 @@ curl -X GET "http://localhost:8080/api/v1/sensors?type=Temperature"
 #### Add reading
 
 ```bash
-curl -X POST http://localhost:8080/api/v1/sensors/TEMP-001/readings \
--H "Content-Type: application/json" \
+curl -X POST http://localhost:8080/api/v1/sensors/TEMP-001/readings
+-H "Content-Type: application/json"
 -d '{"value":25.5}'
 ```
 
@@ -252,4 +252,4 @@ This API demonstrates:
 
 ## 🎥 Video Demonstration
 
-(Include your video link here)
+Link-
