@@ -1,3 +1,4 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.util;
 
 import com.smartcampus.model.Room;
@@ -10,11 +11,8 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 import javax.servlet.annotation.WebListener;
 
-/**
- * Automatically seeds the database with initial data on application startup.
- */
 @WebListener
-public class DatabaseSeeder implements ServletContextListener {
+public class DatabaseSeeder implements ServletContextListener { // seed basic data on startup
 
     private final RoomService roomService = new RoomService();
     private final SensorService sensorService = new SensorService();
@@ -23,25 +21,25 @@ public class DatabaseSeeder implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         try {
-            // 1. Seed Users
+            // seed some users if they don't exist
             if (new com.smartcampus.repository.UserRepository().findByUsername("admin") == null) {
                 authService.register("admin", "password123", "ADMIN");
                 authService.register("student", "password123", "USER");
             }
 
-            // 2. Seed Rooms (if empty)
+            // seed some rooms
             if (roomService.getAllRooms().isEmpty()) {
-                Room r1 = new Room("LIB-301", "Library Quiet Study", 50);
-                Room r2 = new Room("LAB-101", "Computer Science Lab A", 30);
+                Room r1 = new Room("LIB-301", "Library Area 1", 50);
+                Room r2 = new Room("LAB-101", "Computer Lab 1", 30);
                 roomService.createRoom(r1);
                 roomService.createRoom(r2);
 
-                // 3. Seed Sensors
-                sensorService.createSensor(new Sensor("TEMP-001", "Temperature", "ACTIVE", 22.5, "LIB-301"));
+                // add initial sensors
+                sensorService.createSensor(new Sensor("TEMP-001", "Temp", "ACTIVE", 22.5, "LIB-301"));
                 sensorService.createSensor(new Sensor("CO2-001", "CO2", "ACTIVE", 410.0, "LAB-101"));
             }
         } catch (Exception e) {
-            System.err.println("Failed to seed database: " + e.getMessage());
+            System.err.println("DB seed failed: " + e.getMessage());
         }
     }
 

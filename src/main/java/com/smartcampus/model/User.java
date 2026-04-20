@@ -1,3 +1,4 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.model;
 
 import javax.persistence.*;
@@ -6,7 +7,7 @@ import javax.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User { // user for login
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +25,7 @@ public class User {
 
     @NotBlank(message = "Role is required")
     @Column(nullable = false)
-    private String role; // e.g., "ADMIN", "STUDENT", "USER"
+    private String role; // ADMIN or USER
 
     public User() {}
 
@@ -34,7 +35,6 @@ public class User {
         this.role = role;
     }
 
-    // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -1,3 +1,4 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.model;
 
 import javax.persistence.*;
@@ -6,32 +7,26 @@ import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Represents a physical room in the Smart Campus.
- * Annotated for JPA persistence and Bean Validation.
- */
 @Entity
 @Table(name = "rooms")
-public class Room {
+public class Room { // physical campus room
 
     @Id
     @Column(length = 20)
     @NotBlank(message = "Room ID is required")
-    private String id;           // Unique identifier, e.g. "LIB-301"
+    private String id; 
 
     @NotBlank(message = "Room name is required")
     @Column(nullable = false)
-    private String name;         // Human-readable name, e.g. "Library Quiet Study"
+    private String name; 
 
     @Min(value = 1, message = "Capacity must be at least 1")
-    private int capacity;        // Maximum occupancy for safety regulations
+    private int capacity; // max people allowed
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "room_sensors", joinColumns = @JoinColumn(name = "room_id"))
     @Column(name = "sensor_id")
-    private List<String> sensorIds = new ArrayList<>();  // IDs of sensors in this room
-
-    // ── Constructors ────────────────────────────────────────────────────────────
+    private List<String> sensorIds = new ArrayList<>(); // list of sensors in here
 
     public Room() {}
 
@@ -41,52 +36,24 @@ public class Room {
         this.capacity = capacity;
     }
 
-    // ── Getters & Setters ────────────────────────────────────────────────────────
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getId() {
-        return id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public int getCapacity() { return capacity; }
+    public void setCapacity(int capacity) { this.capacity = capacity; }
 
-    public String getName() {
-        return name;
-    }
+    public List<String> getSensorIds() { return sensorIds; }
+    public void setSensorIds(List<String> sensorIds) { this.sensorIds = sensorIds; }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public int getCapacity() {
-        return capacity;
-    }
-
-    public void setCapacity(int capacity) {
-        this.capacity = capacity;
-    }
-
-    public List<String> getSensorIds() {
-        return sensorIds;
-    }
-
-    public void setSensorIds(List<String> sensorIds) {
-        this.sensorIds = sensorIds;
-    }
-
-    /**
-     * Convenience method to add a sensor ID to this room.
-     */
     public void addSensorId(String sensorId) {
         if (!this.sensorIds.contains(sensorId)) {
             this.sensorIds.add(sensorId);
         }
     }
 
-    /**
-     * Convenience method to remove a sensor ID from this room.
-     */
     public void removeSensorId(String sensorId) {
         this.sensorIds.remove(sensorId);
     }

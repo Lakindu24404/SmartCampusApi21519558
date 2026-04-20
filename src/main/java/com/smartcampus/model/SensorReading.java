@@ -1,29 +1,24 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-/**
- * Represents a historical sensor reading event.
- * Annotated for JPA persistence.
- */
 @Entity
 @Table(name = "sensor_readings")
-public class SensorReading {
+public class SensorReading { // log of sensor readings
 
     @Id
-    private String id;        // Unique reading event ID (UUID)
+    private String id; 
 
     @NotNull(message = "Timestamp is required")
-    private long timestamp;   // Epoch time (ms) when the reading was captured
+    private long timestamp; 
 
-    private double value;     // The actual metric value recorded by the hardware
+    private double value; 
 
     @NotBlank(message = "Sensor ID is required")
-    private String sensorId;  // Foreign key linking to the Sensor
-
-    // ── Constructors ────────────────────────────────────────────────────────────
+    private String sensorId; // which sensor recorded this
 
     public SensorReading() {}
 
@@ -34,37 +29,15 @@ public class SensorReading {
         this.sensorId = sensorId;
     }
 
-    // ── Getters & Setters ────────────────────────────────────────────────────────
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getId() {
-        return id;
-    }
+    public long getTimestamp() { return timestamp; }
+    public void setTimestamp(long timestamp) { this.timestamp = timestamp; }
 
-    public void setId(String id) {
-        this.id = id;
-    }
+    public double getValue() { return value; }
+    public void setValue(double value) { this.value = value; }
 
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(long timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public double getValue() {
-        return value;
-    }
-
-    public void setValue(double value) {
-        this.value = value;
-    }
-
-    public String getSensorId() {
-        return sensorId;
-    }
-
-    public void setSensorId(String sensorId) {
-        this.sensorId = sensorId;
-    }
+    public String getSensorId() { return sensorId; }
+    public void setSensorId(String sensorId) { this.sensorId = sensorId; }
 }
