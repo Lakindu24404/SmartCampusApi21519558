@@ -29,7 +29,7 @@ This is a JAX-RS API for managing campus rooms and sensors. Built with Jersey an
 
 ### Testing
 - **Swagger**: `http://localhost:8080/swagger-ui/`
-- **Postman**: Import `SmartCampusAPI.postman_collection.json` from the root folder.
+- **Postman**: Import `SmartCampusAPI.postman_collection.json` from the `postman` folder.
 
 ---
 
