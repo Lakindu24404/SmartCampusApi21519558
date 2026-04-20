@@ -31,7 +31,14 @@ import java.util.Set;
     ),
     servers = @Server(url = "/api/v1")
 )
+@io.swagger.v3.oas.annotations.security.SecurityScheme(
+    name = "bearerAuth",
+    type = io.swagger.v3.oas.annotations.enums.SecuritySchemeType.HTTP,
+    bearerFormat = "JWT",
+    scheme = "bearer"
+)
 public class SmartCampusApplication extends Application {
+
 
     @Override
     public Set<Class<?>> getClasses() {
