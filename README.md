@@ -1,4 +1,4 @@
-# Smart Campus IoT API
+# Smart Campus IoT API - W2151955/ 20241937 / Lakindu Jayathilaka
 <!-- Author: W2151955/ 20241937 / Lakindu Jayathilaka -->
 
 ## 1. Overview
