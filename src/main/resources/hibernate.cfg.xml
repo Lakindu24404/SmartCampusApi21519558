@@ -1,35 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Author: W2151955/ 20241937 / Lakindu Jayathilaka -->
 <!DOCTYPE hibernate-configuration PUBLIC
         "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
         "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
     <session-factory>
-        <!-- Database connection settings -->
+        <!-- db connection settings -->
         <property name="connection.driver_class">com.mysql.cj.jdbc.Driver</property>
-        <property name="connection.url">jdbc:mysql://localhost:3306/smart_campus?createDatabaseIfNotExist=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC</property>
+        <property name="connection.url">jdbc:mysql://localhost:3306/smart_campus?useSSL=false&amp;allowPublicKeyRetrieval=true&amp;serverTimezone=UTC</property>
         <property name="connection.username">root</property>
         <property name="connection.password">password</property>
 
-        <!-- JDBC connection pool (use the built-in pool for simplicity) -->
-        <property name="connection.pool_size">5</property>
-
-        <!-- SQL dialect -->
+        <!-- hibernate settings -->
         <property name="dialect">org.hibernate.dialect.MySQL8Dialect</property>
-
-        <!-- Enable Hibernate's automatic session context management -->
-        <property name="current_session_context_class">thread</property>
-
-        <!-- Echo all executed SQL to stdout -->
-        <property name="show_sql">true</property>
+        <property name="show_sql">false</property>
         <property name="format_sql">true</property>
-
-        <!-- Drop and re-create the database schema on startup -->
         <property name="hbm2ddl.auto">update</property>
 
-        <!-- Annotated entities -->
-        <mapping class="com.smartcampus.model.User"/>
+        <!-- entities mapping -->
         <mapping class="com.smartcampus.model.Room"/>
         <mapping class="com.smartcampus.model.Sensor"/>
         <mapping class="com.smartcampus.model.SensorReading"/>
+        <mapping class="com.smartcampus.model.User"/>
     </session-factory>
 </hibernate-configuration>

@@ -1,9 +1,11 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus;
 
 import com.smartcampus.filter.ApiLoggingFilter;
 import com.smartcampus.security.JwtFilter;
 import com.smartcampus.resource.*;
 import com.smartcampus.exception.*;
+import com.smartcampus.exception.mapper.*;
 
 import io.swagger.v3.jaxrs2.integration.resources.AcceptHeaderOpenApiResource;
 import io.swagger.v3.jaxrs2.integration.resources.OpenApiResource;
@@ -17,17 +19,13 @@ import javax.ws.rs.core.Application;
 import java.util.HashSet;
 import java.util.Set;
 
-/**
- * JAX-RS Application entry point.
- * Professional Smart Campus API with OpenAPI 3.0 documentation.
- */
 @ApplicationPath("/api/v1")
 @OpenAPIDefinition(
     info = @Info(
         title = "Smart Campus IoT API",
         version = "1.0.0",
-        description = "Enterprise-grade RESTful API for managing rooms, sensors, and reading history across the Smart Campus site. Features JWT security, JPA persistence, and Bean Validation.",
-        license = @License(name = "University of Westminster", url = "https://www.westminster.ac.uk/")
+        description = "RESTful API for managing rooms and sensors. Features JWT security and Hibernate.",
+        license = @License(name = "University of Westminster")
     ),
     servers = @Server(url = "/api/v1")
 )
@@ -37,29 +35,31 @@ import java.util.Set;
     bearerFormat = "JWT",
     scheme = "bearer"
 )
-public class SmartCampusApplication extends Application {
-
+public class SmartCampusApplication extends Application { // app entry point
 
     @Override
     public Set<Class<?>> getClasses() {
         Set<Class<?>> classes = new HashSet<>();
 
-        // ── Resource classes ──────────────────────────────────────
+        // register resources
         classes.add(DiscoveryResource.class);
         classes.add(RoomResource.class);
         classes.add(SensorResource.class);
         classes.add(SensorReadingResource.class);
         classes.add(AuthResource.class);
 
-        // ── Exception Mappers ─────────────────────────────────────
+        // register exception mappers
         classes.add(ValidationExceptionMapper.class);
-        classes.add(RoomNotEmptyException.class); // JAX-RS will use its built-in or custom mapper
+        classes.add(RoomNotEmptyExceptionMapper.class);
+        classes.add(LinkedResourceNotFoundExceptionMapper.class);
+        classes.add(SensorUnavailableExceptionMapper.class);
+        classes.add(GlobalExceptionMapper.class);
 
-        // ── Filters ───────────────────────────────────────────────
+        // register filters
         classes.add(ApiLoggingFilter.class);
         classes.add(JwtFilter.class);
 
-        // ── Swagger Resources ─────────────────────────────────────
+        // swagger resources
         classes.add(OpenApiResource.class);
         classes.add(AcceptHeaderOpenApiResource.class);
 

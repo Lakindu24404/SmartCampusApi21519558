@@ -1,3 +1,4 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.security;
 
 import com.smartcampus.service.AuthService;
@@ -12,32 +13,27 @@ import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.ext.Provider;
-import java.io.IOException;
 import java.security.Principal;
-import java.util.Arrays;
-import java.util.List;
 
 @Secured
 @Provider
 @Priority(Priorities.AUTHENTICATION)
-public class JwtFilter implements ContainerRequestFilter {
+public class JwtFilter implements ContainerRequestFilter { // intercept requests to check jwt
 
     @Override
-    public void filter(ContainerRequestContext requestContext) throws IOException {
-        // Get the Authorization header from the request
-        String authorizationHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
+    public void filter(ContainerRequestContext requestContext) {
+        String authHeader = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
 
-        // Validate the Authorization header
-        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+        // check if header is there
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             requestContext.abortWith(Response.status(Response.Status.UNAUTHORIZED).build());
             return;
         }
 
-        // Extract the token from the Authorization header
-        String token = authorizationHeader.substring("Bearer ".length()).trim();
+        String token = authHeader.substring("Bearer ".length()).trim();
 
         try {
-            // Validate the token
+            // validate token
             Claims claims = Jwts.parserBuilder()
                     .setSigningKey(AuthService.getSigningKey())
                     .build()
@@ -45,17 +41,19 @@ public class JwtFilter implements ContainerRequestFilter {
                     .getBody();
 
             String username = claims.getSubject();
-            String role = claims.get("role", String.class);
+            final String role = (String) claims.get("role");
 
-            // Set the security context
-            final SecurityContext currentSecurityContext = requestContext.getSecurityContext();
+            // set security context for @RolesAllowed or manual checks
             requestContext.setSecurityContext(new SecurityContext() {
                 @Override
                 public Principal getUserPrincipal() { return () -> username; }
+
                 @Override
                 public boolean isUserInRole(String r) { return role != null && role.equals(r); }
+
                 @Override
-                public boolean isSecure() { return currentSecurityContext.isSecure(); }
+                public boolean isSecure() { return false; }
+
                 @Override
                 public String getAuthenticationScheme() { return "Bearer"; }
             });

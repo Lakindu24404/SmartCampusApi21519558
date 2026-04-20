@@ -1,17 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!-- Author: W2151955/ 20241937 / Lakindu Jayathilaka -->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
     <groupId>com.smartcampus</groupId>
     <artifactId>SmartCampusApi</artifactId>
-    <version>1.0-SNAPSHOT</version>
     <packaging>war</packaging>
-
-    <name>Smart Campus Sensor &amp; Room Management API</name>
-    <description>JAX-RS RESTful API for the University Smart Campus initiative</description>
+    <version>1.0-SNAPSHOT</version>
+    <name>SmartCampusApi Maven Webapp</name>
+    <url>http://maven.apache.org</url>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>
@@ -21,57 +17,36 @@
     </properties>
 
     <dependencies>
-        <!-- Jersey JAX-RS Implementation (javax namespace - works with Tomcat 9) -->
+        <!-- jersey libs -->
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
             <version>${jersey.version}</version>
         </dependency>
-
-        <!-- Jersey DI (HK2) - required for Jersey 2.x -->
         <dependency>
             <groupId>org.glassfish.jersey.inject</groupId>
             <artifactId>jersey-hk2</artifactId>
             <version>${jersey.version}</version>
         </dependency>
-
-        <!-- Jackson JSON support for Jersey -->
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
             <artifactId>jersey-media-json-jackson</artifactId>
             <version>${jersey.version}</version>
         </dependency>
 
-        <!-- JAX-RS API -->
-        <dependency>
-            <groupId>javax.ws.rs</groupId>
-            <artifactId>javax.ws.rs-api</artifactId>
-            <version>2.1.1</version>
-        </dependency>
-
-        <!-- Servlet API (provided by Tomcat) -->
-        <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-            <version>4.0.1</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!-- Hibernate ORM -->
+        <!-- hibernate and mysql -->
         <dependency>
             <groupId>org.hibernate</groupId>
             <artifactId>hibernate-core</artifactId>
             <version>5.6.15.Final</version>
         </dependency>
-
-        <!-- MySQL Connector -->
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
 
-        <!-- Bean Validation (Hibernate Validator) -->
+        <!-- validation -->
         <dependency>
             <groupId>org.hibernate.validator</groupId>
             <artifactId>hibernate-validator</artifactId>
@@ -79,11 +54,11 @@
         </dependency>
         <dependency>
             <groupId>org.glassfish</groupId>
-            <artifactId>javax.el</artifactId>
-            <version>3.0.0</version>
+            <artifactId>jakarta.el</artifactId>
+            <version>3.0.4</version>
         </dependency>
 
-        <!-- JWT for Security -->
+        <!-- jwt security -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -101,27 +76,13 @@
             <version>0.11.5</version>
             <scope>runtime</scope>
         </dependency>
-
-        <!-- JAXB Support (for Java 9+) -->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-
-        <!-- BCrypt for Password Hashing -->
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
             <version>0.4</version>
         </dependency>
 
-        <!-- Swagger/OpenAPI for Documentation -->
+        <!-- swagger for api docs -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-jaxrs2</artifactId>
@@ -132,32 +93,17 @@
             <artifactId>swagger-jaxrs2-servlet-initializer-v2</artifactId>
             <version>2.2.15</version>
         </dependency>
-
-
-
     </dependencies>
 
     <build>
         <finalName>SmartCampusApi</finalName>
         <plugins>
-            <!-- Tomcat 7 Maven Plugin (supports Tomcat 7, 8, and 9) -->
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
                 <artifactId>tomcat7-maven-plugin</artifactId>
                 <version>2.2</version>
                 <configuration>
-                    <port>8080</port>
                     <path>/</path>
-                </configuration>
-            </plugin>
-
-            <!-- WAR Plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-war-plugin</artifactId>
-                <version>3.3.2</version>
-                <configuration>
-                    <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
         </plugins>
