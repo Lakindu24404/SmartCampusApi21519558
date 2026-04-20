@@ -1,17 +1,34 @@
 package com.smartcampus.model;
 
+import javax.persistence.*;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Represents a physical room in the Smart Campus.
- * A room can house multiple sensors, tracked via sensorIds.
+ * Annotated for JPA persistence and Bean Validation.
  */
+@Entity
+@Table(name = "rooms")
 public class Room {
 
+    @Id
+    @Column(length = 20)
+    @NotBlank(message = "Room ID is required")
     private String id;           // Unique identifier, e.g. "LIB-301"
+
+    @NotBlank(message = "Room name is required")
+    @Column(nullable = false)
     private String name;         // Human-readable name, e.g. "Library Quiet Study"
+
+    @Min(value = 1, message = "Capacity must be at least 1")
     private int capacity;        // Maximum occupancy for safety regulations
+
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "room_sensors", joinColumns = @JoinColumn(name = "room_id"))
+    @Column(name = "sensor_id")
     private List<String> sensorIds = new ArrayList<>();  // IDs of sensors in this room
 
     // ── Constructors ────────────────────────────────────────────────────────────

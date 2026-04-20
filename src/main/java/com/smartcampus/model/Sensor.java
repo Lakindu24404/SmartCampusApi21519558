@@ -1,15 +1,32 @@
 package com.smartcampus.model;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Pattern;
+
 /**
  * Represents a sensor deployed within a Smart Campus room.
  * Status values: "ACTIVE", "MAINTENANCE", "OFFLINE"
  */
+@Entity
+@Table(name = "sensors")
 public class Sensor {
 
+    @Id
+    @Column(length = 20)
+    @NotBlank(message = "Sensor ID is required")
     private String id;            // Unique identifier, e.g. "TEMP-001"
+
+    @NotBlank(message = "Sensor type is required")
     private String type;          // Category: "Temperature", "Occupancy", "CO2"
+
+    @NotBlank(message = "Status is required")
+    @Pattern(regexp = "ACTIVE|MAINTENANCE|OFFLINE", message = "Status must be ACTIVE, MAINTENANCE, or OFFLINE")
     private String status;        // Current state: "ACTIVE", "MAINTENANCE", "OFFLINE"
+
     private double currentValue;  // Most recent measurement recorded
+
+    @NotBlank(message = "Room ID is required")
     private String roomId;        // Foreign key linking to the Room
 
     // ── Constructors ────────────────────────────────────────────────────────────
