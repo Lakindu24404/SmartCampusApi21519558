@@ -1,3 +1,4 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.repository;
 
 import com.smartcampus.util.HibernateUtil;
@@ -5,7 +6,7 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import java.util.List;
 
-public abstract class BaseRepository<T, ID> {
+public abstract class BaseRepository<T, ID> { // generic crud for all repos
     private final Class<T> type;
 
     protected BaseRepository(Class<T> type) {
