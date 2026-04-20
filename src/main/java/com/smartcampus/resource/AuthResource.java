@@ -1,3 +1,4 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.resource;
 
 import com.smartcampus.service.AuthService;
@@ -11,7 +12,7 @@ import java.util.Map;
 @Path("/auth")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class AuthResource {
+public class AuthResource { // login and register endpoints
 
     private final AuthService authService = new AuthService();
 
@@ -23,7 +24,7 @@ public class AuthResource {
 
         if (username == null || password == null) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(errorBody("Missing credentials"))
+                    .entity(errorBody("Missing login info"))
                     .build();
         }
 
@@ -51,7 +52,7 @@ public class AuthResource {
             return Response.status(Response.Status.CREATED).build();
         } catch (Exception e) {
             return Response.status(Response.Status.BAD_REQUEST)
-                    .entity(errorBody("Could not register user: " + e.getMessage()))
+                    .entity(errorBody("Register failed: " + e.getMessage()))
                     .build();
         }
     }

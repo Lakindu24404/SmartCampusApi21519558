@@ -1,30 +1,13 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.exception;
 
-/**
- * Thrown when a client tries to create a Sensor with a roomId that
- * does not exist in the system.
- *
- * Mapped to HTTP 422 Unprocessable Entity by LinkedResourceNotFoundExceptionMapper.
- *
- * 422 is preferred over 404 here because the request URI is valid — the
- * problem is a broken reference INSIDE the valid JSON payload.
- */
-public class LinkedResourceNotFoundException extends RuntimeException {
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
-    private final String field;
-    private final String value;
-
-    public LinkedResourceNotFoundException(String field, String value) {
-        super("The referenced resource for field '" + field + "' with value '" + value + "' does not exist.");
-        this.field = field;
-        this.value = value;
-    }
-
-    public String getField() {
-        return field;
-    }
-
-    public String getValue() {
-        return value;
+public class LinkedResourceNotFoundException extends WebApplicationException { // for 404s when linking stuff
+    public LinkedResourceNotFoundException(String message) {
+        super(Response.status(Response.Status.NOT_FOUND)
+                .entity(message)
+                .build());
     }
 }

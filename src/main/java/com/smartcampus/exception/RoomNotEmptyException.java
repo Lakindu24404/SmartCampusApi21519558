@@ -1,19 +1,13 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.exception;
 
-/**
- * Thrown when a DELETE is attempted on a Room that still has sensors assigned.
- * Mapped to HTTP 409 Conflict by RoomNotEmptyExceptionMapper.
- */
-public class RoomNotEmptyException extends RuntimeException {
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Response;
 
-    private final String roomId;
-
+public class RoomNotEmptyException extends WebApplicationException { // for 409s when deleting rooms
     public RoomNotEmptyException(String roomId) {
-        super("Room '" + roomId + "' cannot be deleted because it still has active sensors assigned.");
-        this.roomId = roomId;
-    }
-
-    public String getRoomId() {
-        return roomId;
+        super(Response.status(Response.Status.CONFLICT)
+                .entity("room " + roomId + " has sensors in it")
+                .build());
     }
 }

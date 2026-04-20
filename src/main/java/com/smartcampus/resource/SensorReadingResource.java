@@ -1,3 +1,4 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.resource;
 
 import com.smartcampus.service.SensorReadingService;
@@ -16,7 +17,7 @@ import java.util.Map;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Reading History", description = "Monitor and record historical sensor data")
-public class SensorReadingResource {
+public class SensorReadingResource { // endpoints for sensor readings
 
     private final SensorReadingService readingService = new SensorReadingService();
 
@@ -31,7 +32,7 @@ public class SensorReadingResource {
 
     @POST
     @Path("/{sensorId}")
-    @Secured({"ADMIN", "USER"}) // Allow users to record readings
+    @Secured({"ADMIN", "USER"}) 
     @SecurityRequirement(name = "bearerAuth")
     @Operation(summary = "Record a measurement", description = "Appends a new value to the reading history and updates the sensor's current state. Requires USER or ADMIN role.")
     @ApiResponse(responseCode = "201", description = "Reading successfully recorded")

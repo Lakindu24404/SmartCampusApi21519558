@@ -1,3 +1,4 @@
+// Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.resource;
 
 import com.smartcampus.model.Sensor;
@@ -18,7 +19,7 @@ import java.net.URI;
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Sensor Management", description = "CRUD operations for IoT campus sensors")
-public class SensorResource {
+public class SensorResource { // api endpoints for sensors
 
     private final SensorService sensorService = new SensorService();
 
@@ -51,7 +52,7 @@ public class SensorResource {
     public Response getSensorById(@PathParam("sensorId") String sensorId) {
         Sensor sensor = sensorService.getSensorById(sensorId);
         if (sensor == null) {
-            throw new NotFoundException("Sensor with ID " + sensorId + " not found");
+            throw new NotFoundException("no sensor with id " + sensorId);
         }
         return Response.ok(sensor).build();
     }
