@@ -2,7 +2,6 @@
 package com.smartcampus;
 
 import com.smartcampus.filter.ApiLoggingFilter;
-import com.smartcampus.security.JwtFilter;
 import com.smartcampus.resource.*;
 import com.smartcampus.exception.*;
 import com.smartcampus.exception.mapper.*;
@@ -24,16 +23,10 @@ import java.util.Set;
     info = @Info(
         title = "Smart Campus IoT API",
         version = "1.0.0",
-        description = "RESTful API for managing rooms and sensors. Features JWT security and Hibernate.",
+        description = "RESTful API for managing rooms and sensors. Features Hibernate.",
         license = @License(name = "University of Westminster")
     ),
     servers = @Server(url = "/api/v1")
-)
-@io.swagger.v3.oas.annotations.security.SecurityScheme(
-    name = "bearerAuth",
-    type = io.swagger.v3.oas.annotations.enums.SecuritySchemeType.HTTP,
-    bearerFormat = "JWT",
-    scheme = "bearer"
 )
 public class SmartCampusApplication extends Application { // app entry point
 
@@ -46,7 +39,6 @@ public class SmartCampusApplication extends Application { // app entry point
         classes.add(RoomResource.class);
         classes.add(SensorResource.class);
         classes.add(SensorReadingResource.class);
-        classes.add(AuthResource.class);
 
         // register exception mappers
         classes.add(ValidationExceptionMapper.class);
@@ -57,7 +49,6 @@ public class SmartCampusApplication extends Application { // app entry point
 
         // register filters
         classes.add(ApiLoggingFilter.class);
-        classes.add(JwtFilter.class);
 
         // swagger resources
         classes.add(OpenApiResource.class);

@@ -3,7 +3,6 @@ package com.smartcampus.util;
 
 import com.smartcampus.model.Room;
 import com.smartcampus.model.Sensor;
-import com.smartcampus.service.AuthService;
 import com.smartcampus.service.RoomService;
 import com.smartcampus.service.SensorService;
 
@@ -16,16 +15,11 @@ public class DatabaseSeeder implements ServletContextListener { // seed basic da
 
     private final RoomService roomService = new RoomService();
     private final SensorService sensorService = new SensorService();
-    private final AuthService authService = new AuthService();
 
     @Override
     public void contextInitialized(ServletContextEvent sce) {
         try {
-            // seed some users if they don't exist
-            if (new com.smartcampus.repository.UserRepository().findByUsername("admin") == null) {
-                authService.register("admin", "password123", "ADMIN");
-                authService.register("student", "password123", "USER");
-            }
+
 
             // seed some rooms
             if (roomService.getAllRooms().isEmpty()) {

@@ -3,10 +3,8 @@ package com.smartcampus.resource;
 
 import com.smartcampus.model.Room;
 import com.smartcampus.service.RoomService;
-import com.smartcampus.security.Secured;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.validation.Valid;
@@ -31,12 +29,9 @@ public class RoomResource { // api endpoints for rooms
     }
 
     @POST
-    @Secured({"ADMIN"})
-    @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Create a new room", description = "Adds a new room to the system. Requires ADMIN role.")
+    @Operation(summary = "Create a new room", description = "Adds a new room to the system.")
     @ApiResponse(responseCode = "201", description = "Room successfully created")
     @ApiResponse(responseCode = "400", description = "Invalid input data")
-    @ApiResponse(responseCode = "401", description = "Unauthorized - Missing or invalid token")
     public Response createRoom(@Valid Room room) {
         roomService.createRoom(room);
         return Response.created(URI.create("/api/v1/rooms/" + room.getId()))
@@ -59,12 +54,9 @@ public class RoomResource { // api endpoints for rooms
 
     @DELETE
     @Path("/{roomId}")
-    @Secured({"ADMIN"})
-    @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Delete a room", description = "Removes a room from the system. Blocked if sensors are assigned. Requires ADMIN role.")
+    @Operation(summary = "Delete a room", description = "Removes a room from the system. Blocked if sensors are assigned.")
     @ApiResponse(responseCode = "204", description = "Room successfully deleted")
     @ApiResponse(responseCode = "409", description = "Conflict - Room has active sensors")
-    @ApiResponse(responseCode = "401", description = "Unauthorized")
     public Response deleteRoom(@PathParam("roomId") String roomId) {
         roomService.deleteRoom(roomId);
         return Response.noContent().build();

@@ -3,10 +3,8 @@ package com.smartcampus.resource;
 
 import com.smartcampus.model.Sensor;
 import com.smartcampus.service.SensorService;
-import com.smartcampus.security.Secured;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.validation.Valid;
@@ -31,12 +29,9 @@ public class SensorResource { // api endpoints for sensors
     }
 
     @POST
-    @Secured({"ADMIN"})
-    @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Register a new sensor", description = "Adds a new sensor to the system and links it to a room. Requires ADMIN role.")
+    @Operation(summary = "Register a new sensor", description = "Adds a new sensor to the system and links it to a room.")
     @ApiResponse(responseCode = "201", description = "Sensor successfully registered")
     @ApiResponse(responseCode = "400", description = "Invalid input or room not found")
-    @ApiResponse(responseCode = "401", description = "Unauthorized")
     public Response createSensor(@Valid Sensor sensor) {
         sensorService.createSensor(sensor);
         return Response.created(URI.create("/api/v1/sensors/" + sensor.getId()))
@@ -59,11 +54,8 @@ public class SensorResource { // api endpoints for sensors
 
     @DELETE
     @Path("/{sensorId}")
-    @Secured({"ADMIN"})
-    @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Decommission a sensor", description = "Removes a sensor from the system. Requires ADMIN role.")
+    @Operation(summary = "Decommission a sensor", description = "Removes a sensor from the system.")
     @ApiResponse(responseCode = "204", description = "Sensor successfully removed")
-    @ApiResponse(responseCode = "401", description = "Unauthorized")
     public Response deleteSensor(@PathParam("sensorId") String sensorId) {
         sensorService.deleteSensor(sensorId);
         return Response.noContent().build();

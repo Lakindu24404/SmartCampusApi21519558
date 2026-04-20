@@ -26,7 +26,6 @@ public class DiscoveryResource { // api entry point with hateoas links
         Map<String, String> links = new HashMap<>();
         links.put("rooms", baseUri + "rooms");
         links.put("sensors", baseUri + "sensors");
-        links.put("auth", baseUri + "auth");
         
         response.put("_links", links);
         

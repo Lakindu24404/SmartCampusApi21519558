@@ -21,6 +21,5 @@
         <mapping class="com.smartcampus.model.Room"/>
         <mapping class="com.smartcampus.model.Sensor"/>
         <mapping class="com.smartcampus.model.SensorReading"/>
-        <mapping class="com.smartcampus.model.User"/>
     </session-factory>
 </hibernate-configuration>

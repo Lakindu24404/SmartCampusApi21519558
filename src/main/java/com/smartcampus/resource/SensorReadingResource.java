@@ -2,10 +2,8 @@
 package com.smartcampus.resource;
 
 import com.smartcampus.service.SensorReadingService;
-import com.smartcampus.security.Secured;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import javax.ws.rs.*;
@@ -32,12 +30,9 @@ public class SensorReadingResource { // endpoints for sensor readings
 
     @POST
     @Path("/{sensorId}")
-    @Secured({"ADMIN", "USER"}) 
-    @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Record a measurement", description = "Appends a new value to the reading history and updates the sensor's current state. Requires USER or ADMIN role.")
+    @Operation(summary = "Record a measurement", description = "Appends a new value to the reading history and updates the sensor's current state.")
     @ApiResponse(responseCode = "201", description = "Reading successfully recorded")
     @ApiResponse(responseCode = "400", description = "Missing value in payload")
-    @ApiResponse(responseCode = "401", description = "Unauthorized")
     @ApiResponse(responseCode = "404", description = "Sensor not found")
     public Response addReading(@PathParam("sensorId") String sensorId, Map<String, Double> payload) {
         Double value = payload.get("value");
