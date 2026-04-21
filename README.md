@@ -1,96 +1,121 @@
-Smart Campus API — Overview and Implementation Guide
+# Smart Campus API — Overview and Implementation Guide
 
-1. Introduction
+## 1. Introduction
 
 The Smart Campus API is designed to facilitate the management of campus infrastructure through a RESTful web service architecture. It enables the handling of key entities such as rooms, sensors, and sensor readings. The API follows standard HTTP conventions and is implemented using JAX-RS, ensuring scalability, modularity, and ease of integration with client applications.
 
-2. API Architecture and Design
+## 2. API Architecture and Design
 
-The API is structured around a base path defined as /api/v1, configured using the @ApplicationPath annotation within the JAX-RS application. This versioned approach supports future extensibility and backward compatibility.
+The API is structured around a base path defined as `/api/v1`, configured using the `@ApplicationPath` annotation within the JAX-RS application. This versioned approach supports future extensibility and backward compatibility.
 
-2.1 Resource Structure
+### 2.1 Resource Structure
 
 The system is composed of three primary resource categories:
 
-Rooms (/rooms)
-This resource provides Create, Read, Update, and Delete (CRUD) operations for Room entities. Each room is characterised by a unique identifier (id), a descriptive name (name), and a seating capacity (capacity).
-Sensors (/sensors)
-This resource manages Sensor entities, supporting full CRUD functionality. Each sensor includes attributes such as id, type, status, currentValue, and an associated roomId. It is important to note that the sensor identifier is immutable after creation to maintain data integrity.
-Sensor Readings (/sensors/{sensorId}/readings)
-This is implemented as a sub-resource under the Sensor entity. It handles SensorReading objects, which include id, timestamp, and value. When a new reading is recorded, the corresponding sensor’s currentValue is automatically updated to reflect the latest measurement.
-2.2 Data Storage
+- **Rooms (`/rooms`)**
+  This resource provides Create, Read, Update, and Delete (CRUD) operations for Room entities. Each room is characterised by a unique identifier (`id`), a descriptive name (`name`), and a seating capacity (`capacity`).
+- **Sensors (`/sensors`)**
+  This resource manages Sensor entities, supporting full CRUD functionality. Each sensor includes attributes such as `id`, `type`, `status`, `currentValue`, and an associated `roomId`. It is important to note that the sensor identifier is immutable after creation to maintain data integrity.
+- **Sensor Readings (`/sensors/{sensorId}/readings`)**
+  This is implemented as a sub-resource under the Sensor entity. It handles SensorReading objects, which include `id`, `timestamp`, and `value`. When a new reading is recorded, the corresponding sensor’s `currentValue` is automatically updated to reflect the latest measurement.
+
+### 2.2 Data Storage
 
 The system utilises an in-memory DataStore for persistence. While this approach simplifies development and testing, it implies that all stored data will be lost upon server restart. Therefore, it is primarily suitable for prototyping or non-production environments.
 
-2.3 Error Handling Strategy
+### 2.3 Error Handling Strategy
 
 The API incorporates a structured error-handling mechanism using standard HTTP status codes to communicate the outcome of client requests:
 
-400 Bad Request – Indicates malformed or invalid input data.
-404 Not Found – Returned when a requested resource does not exist.
-409 Conflict – Signals a violation of resource uniqueness or state conflicts.
-422 Unprocessable Entity – Represents semantically incorrect data despite valid syntax.
-403 Forbidden – Used when a request violates defined business rules or constraints. 3. Deployment and Execution
-3.1 Prerequisites
+- `400 Bad Request` – Indicates malformed or invalid input data.
+- `404 Not Found` – Returned when a requested resource does not exist.
+- `409 Conflict` – Signals a violation of resource uniqueness or state conflicts.
+- `422 Unprocessable Entity` – Represents semantically incorrect data despite valid syntax.
+- `403 Forbidden` – Used when a request violates defined business rules or constraints. 
+
+## 3. Deployment and Execution
+
+### 3.1 Prerequisites
 
 To successfully build and execute the application, the following requirements must be met:
 
-Java Development Kit (JDK) version 11 or higher
-Apache Maven build automation tool
+- Java Development Kit (JDK) version 11 or higher
+- Apache Maven build automation tool
 
 The application is accessible by default at:
-http://localhost:8080
+`http://localhost:8080`
 
-3.2 Execution Methods
-A. Embedded Jetty Server
-Open a PowerShell terminal within the project directory.
-Execute the build command:
-mvn clean package
-Start the embedded Jetty server:
-mvn jetty:run
-Access the API via:
-http://localhost:8080/api/v1
-B. Deployment on Apache Tomcat
-Build the project using:
-mvn clean package
-Copy the generated ROOT.war file from the target directory into the Tomcat webapps directory (%TOMCAT_HOME%\webapps).
-Restart or start the Tomcat server.
-Access the deployed application at:
-http://localhost:8080/api/v1
-C. NetBeans Integrated Deployment
-Import the Maven project into the NetBeans IDE.
-Ensure the project’s finalName is configured as ROOT, or set the context path to / via Project Properties.
-Perform a clean build and deploy the project.
-Start the application server and access the API at:
-http://localhost:8080/api/v1 4. API Usage Examples
+### 3.2 Execution Methods
 
-The following examples demonstrate typical interactions with the API using curl commands:
+#### A. Embedded Jetty Server
+1. Open a PowerShell terminal within the project directory.
+2. Execute the build command:
+   ```bash
+   mvn clean package
+   ```
+3. Start the embedded Jetty server:
+   ```bash
+   mvn jetty:run
+   ```
+4. Access the API via:
+   `http://localhost:8080/api/v1`
 
-Creating a Room (HTTP 201 Created)
+#### B. Deployment on Apache Tomcat
+1. Build the project using:
+   ```bash
+   mvn clean package
+   ```
+2. Copy the generated `ROOT.war` file from the `target` directory into the Tomcat `webapps` directory (`%TOMCAT_HOME%\webapps`).
+3. Restart or start the Tomcat server.
+4. Access the deployed application at:
+   `http://localhost:8080/api/v1`
 
+#### C. NetBeans Integrated Deployment
+1. Import the Maven project into the NetBeans IDE.
+2. Ensure the project’s `finalName` is configured as `ROOT`, or set the context path to `/` via Project Properties.
+3. Perform a clean build and deploy the project.
+4. Start the application server and access the API at:
+   `http://localhost:8080/api/v1`
+
+## 4. API Usage Examples
+
+The following examples demonstrate typical interactions with the API using `curl` commands:
+
+### Creating a Room (HTTP 201 Created)
+
+```bash
 curl -i -X POST http://localhost:8080/api/v1/rooms \
 -H "Content-Type: application/json" \
 -d '{"id":"LIB-301","name":"Library Quiet Study","capacity":40}'
+```
 
-Registering a Sensor (HTTP 201 Created)
+### Registering a Sensor (HTTP 201 Created)
 
+```bash
 curl -i -X POST http://localhost:8080/api/v1/sensors \
 -H "Content-Type: application/json" \
 -d '{"id":"TEMP-001","type":"Temperature","status":"ACTIVE","currentValue":0,"roomId":"LIB-301"}'
+```
 
-Retrieving Sensor List (HTTP 200 OK)
+### Retrieving Sensor List (HTTP 200 OK)
 
+```bash
 curl -i http://localhost:8080/api/v1/sensors
+```
 
-Submitting a Sensor Reading (HTTP 201 Created)
+### Submitting a Sensor Reading (HTTP 201 Created)
 
+```bash
 curl -i -X POST http://localhost:8080/api/v1/sensors/TEMP-001/readings \
 -H "Content-Type: application/json" \
 -d '{"id":"R-001","timestamp":1710000000000,"value":23.5}'
+```
 
-Deleting a Sensor (HTTP 204 No Content)
+### Deleting a Sensor (HTTP 204 No Content)
 
+```bash
 curl -i -X DELETE http://localhost:8080/api/v1/sensors/TEMP-001
+```
 
 ---
 
