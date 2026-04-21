@@ -5,7 +5,7 @@
 ## 🎓 Academic Information
 
 - **Name:** Lakindu Jayathilaka  
-- **University Registration:** 21519558 / 20241937  
+- **University Registration No:** 21519558 / 20241937  
 - **Degree:** (Hons) Computer Science  
 - **Module:** Client Server Architecture  
 
