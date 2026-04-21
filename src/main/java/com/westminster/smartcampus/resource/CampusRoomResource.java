@@ -31,8 +31,10 @@ public class CampusRoomResource {
     @Path("/{id}")
     // api response
     public Response getRoomById(@PathParam("id") String id) {
+        // fetching room from the store
         CampusRoom campusRoom = dataStore.getRoom(id);
         if (campusRoom == null) {
+            // throw error if it doesn't exist
             throw new NotFoundException("CampusRoom not found");
         }
         return Response.ok(campusRoom).build();
@@ -51,8 +53,11 @@ public class CampusRoomResource {
             throw new BadRequestException("CampusRoom capacity must be >= 0");
         }
         if (campusRoom.getSensorIds() == null) {
+            // make sure list is not null to avoid crashes
             campusRoom.setSensorIds(null);
         }
+        
+        // checking if room is already there
         boolean alreadyExists = dataStore.getRoom(campusRoom.getId()) != null;
         if (alreadyExists) {
             throw new ConflictException("CampusRoom with id already exists");
@@ -66,10 +71,12 @@ public class CampusRoomResource {
     @Path("/{id}")
     // api response
     public Response deleteRoom(@PathParam("id") String id) {
+        // checking if it exists before deleting
         CampusRoom campusRoom = dataStore.getRoom(id);
         if (campusRoom == null) {
             throw new NotFoundException("CampusRoom not found");
         }
+        // checking if room has active sensors inside
         if (campusRoom.getSensorIds() != null && !campusRoom.getSensorIds().isEmpty()) {
             throw new ConflictException("CampusRoom cannot be deleted while sensors are assigned");
         }

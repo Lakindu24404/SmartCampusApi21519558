@@ -34,10 +34,12 @@ public class SmartSensorResource {
         if (type == null || type.trim().isEmpty()) {
             return all;
         }
+        // filter the sensors if a type is provided in the query string
         String wanted = type.trim();
         List<SmartSensor> filtered = new ArrayList<>();
         for (SmartSensor s : all) {
             if (s != null && s.getType() != null && s.getType().equalsIgnoreCase(wanted)) {
+                // add it if it matches
                 filtered.add(s);
             }
         }
@@ -62,15 +64,22 @@ public class SmartSensorResource {
     // api response
     public Response createSensor(SmartSensor smartSensor) {
         validateSensorForCreate(smartSensor);
+        
+        // checking if the linked room actually exists
         CampusRoom campusRoom = dataStore.getRoom(smartSensor.getRoomId());
         if (campusRoom == null) {
             throw new UnprocessableEntityException("Referenced roomId does not exist");
         }
+        
         boolean alreadyExists = dataStore.getSensor(smartSensor.getId()) != null;
         if (alreadyExists) {
             throw new ConflictException("SmartSensor with id already exists");
         }
+        
+        // safely adding sensor
         dataStore.upsertSensor(smartSensor);
+        
+        // making sure room knows it has this new sensor
         if (!campusRoom.getSensorIds().contains(smartSensor.getId())) {
             campusRoom.getSensorIds().add(smartSensor.getId());
             dataStore.upsertRoom(campusRoom);
@@ -126,10 +135,12 @@ public class SmartSensorResource {
     @Path("/{sensorId}")
     // api response
     public Response deleteSensor(@PathParam("sensorId") String sensorId) {
+        // grab the existing so we can un-link it
         SmartSensor existing = dataStore.getSensor(sensorId);
         if (existing == null) {
             throw new NotFoundException("SmartSensor not found");
         }
+        // if attached to a room, remove the reference there as well
         if (existing.getRoomId() != null) {
             CampusRoom campusRoom = dataStore.getRoom(existing.getRoomId());
             if (campusRoom != null && campusRoom.getSensorIds() != null) {
@@ -137,6 +148,7 @@ public class SmartSensorResource {
                 dataStore.upsertRoom(campusRoom);
             }
         }
+        // wipe the sensor out completely
         dataStore.deleteSensor(sensorId);
         return Response.noContent().build();
     }

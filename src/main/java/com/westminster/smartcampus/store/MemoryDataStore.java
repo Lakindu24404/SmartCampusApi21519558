@@ -30,8 +30,10 @@ public final class MemoryDataStore {
     }
     public CampusRoom upsertRoom(CampusRoom campusRoom) {
         if (campusRoom == null || campusRoom.getId() == null) {
+            // gotta make sure the room is valid
             throw new IllegalArgumentException("CampusRoom and campusRoom.id must not be null");
         }
+        // pushing it to map
         return rooms.put(campusRoom.getId(), campusRoom);
     }
     public CampusRoom deleteRoom(String id) {
@@ -51,6 +53,7 @@ public final class MemoryDataStore {
         return sensors.put(smartSensor.getId(), smartSensor);
     }
     public SmartSensor deleteSensor(String id) {
+        // clean up the readings when deleting sensor
         readingsBySensorId.remove(id);
         return sensors.remove(id);
     }
@@ -73,10 +76,12 @@ public final class MemoryDataStore {
         if (reading == null) {
             throw new IllegalArgumentException("reading must not be null");
         }
+        // grab or create a thread-safe list to hold readings
         List<SensorDataReading> list = readingsBySensorId.computeIfAbsent(
                 sensorId,
                 k -> Collections.synchronizedList(new ArrayList<>())
         );
+        // store the new reading
         list.add(reading);
     }
 }

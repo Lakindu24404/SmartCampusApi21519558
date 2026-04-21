@@ -1,55 +1,94 @@
-API Design Summary
-Base URL: /api/v1 (configured using @ApplicationPath in the JAX-RS setup).
-Available Resources:
-Rooms: /rooms — Provides full CRUD operations for Room entities (fields: id, name, capacity).
-Sensors: /sensors — Supports CRUD operations for Sensor entities (fields: id, type, status, currentValue, roomId). Note that the sensor ID cannot be modified once created.
-Readings: /sensors/{sensorId}/readings — A nested resource handling SensorReading entities (fields: id, timestamp, value). Creating a reading also updates the currentValue of the associated sensor.
-Data Storage: Uses an in-memory DataStore, meaning all data will be cleared when the server restarts.
-Error Handling: Returns standard HTTP responses such as:
-400 Bad Request
-404 Not Found
-409 Conflict
-422 Unprocessable Entity
-403 Forbidden (for rule violations)
-Build and Run Instructions
+Smart Campus API — Overview and Implementation Guide
 
-Requirements: Java 11 or higher and Maven installed.
-Default URL: http://localhost:8080
+1. Introduction
 
-Option A: Run using Embedded Jetty
-Open PowerShell in the project directory.
-Execute: mvn clean package
-Start the server: mvn jetty:run
-Access the API at: http://localhost:8080/api/v1
-Option B: Deploy on External Tomcat
-Run: mvn clean package
-Copy the generated target/ROOT.war file into %TOMCAT_HOME%\webapps\ROOT.war
+The Smart Campus API is designed to facilitate the management of campus infrastructure through a RESTful web service architecture. It enables the handling of key entities such as rooms, sensors, and sensor readings. The API follows standard HTTP conventions and is implemented using JAX-RS, ensuring scalability, modularity, and ease of integration with client applications.
+
+2. API Architecture and Design
+
+The API is structured around a base path defined as /api/v1, configured using the @ApplicationPath annotation within the JAX-RS application. This versioned approach supports future extensibility and backward compatibility.
+
+2.1 Resource Structure
+
+The system is composed of three primary resource categories:
+
+Rooms (/rooms)
+This resource provides Create, Read, Update, and Delete (CRUD) operations for Room entities. Each room is characterised by a unique identifier (id), a descriptive name (name), and a seating capacity (capacity).
+Sensors (/sensors)
+This resource manages Sensor entities, supporting full CRUD functionality. Each sensor includes attributes such as id, type, status, currentValue, and an associated roomId. It is important to note that the sensor identifier is immutable after creation to maintain data integrity.
+Sensor Readings (/sensors/{sensorId}/readings)
+This is implemented as a sub-resource under the Sensor entity. It handles SensorReading objects, which include id, timestamp, and value. When a new reading is recorded, the corresponding sensor’s currentValue is automatically updated to reflect the latest measurement.
+2.2 Data Storage
+
+The system utilises an in-memory DataStore for persistence. While this approach simplifies development and testing, it implies that all stored data will be lost upon server restart. Therefore, it is primarily suitable for prototyping or non-production environments.
+
+2.3 Error Handling Strategy
+
+The API incorporates a structured error-handling mechanism using standard HTTP status codes to communicate the outcome of client requests:
+
+400 Bad Request – Indicates malformed or invalid input data.
+404 Not Found – Returned when a requested resource does not exist.
+409 Conflict – Signals a violation of resource uniqueness or state conflicts.
+422 Unprocessable Entity – Represents semantically incorrect data despite valid syntax.
+403 Forbidden – Used when a request violates defined business rules or constraints. 3. Deployment and Execution
+3.1 Prerequisites
+
+To successfully build and execute the application, the following requirements must be met:
+
+Java Development Kit (JDK) version 11 or higher
+Apache Maven build automation tool
+
+The application is accessible by default at:
+http://localhost:8080
+
+3.2 Execution Methods
+A. Embedded Jetty Server
+Open a PowerShell terminal within the project directory.
+Execute the build command:
+mvn clean package
+Start the embedded Jetty server:
+mvn jetty:run
+Access the API via:
+http://localhost:8080/api/v1
+B. Deployment on Apache Tomcat
+Build the project using:
+mvn clean package
+Copy the generated ROOT.war file from the target directory into the Tomcat webapps directory (%TOMCAT_HOME%\webapps).
 Restart or start the Tomcat server.
-Open: http://localhost:8080/api/v1
-Option C: Use NetBeans with Built-in Tomcat
-Import the Maven project into NetBeans.
-Ensure the finalName is set to ROOT, or configure the context path as / via Project Properties → Run.
-Build and deploy the project, then start the server.
-Navigate to: http://localhost:8080/api/v1
-Sample curl Commands (PowerShell Compatible)
+Access the deployed application at:
+http://localhost:8080/api/v1
+C. NetBeans Integrated Deployment
+Import the Maven project into the NetBeans IDE.
+Ensure the project’s finalName is configured as ROOT, or set the context path to / via Project Properties.
+Perform a clean build and deploy the project.
+Start the application server and access the API at:
+http://localhost:8080/api/v1 4. API Usage Examples
 
-Create a Room (201 Created)
+The following examples demonstrate typical interactions with the API using curl commands:
 
-curl -i -X POST http://localhost:8080/api/v1/rooms -H "Content-Type: application/json" -d '{"id":"LIB-301","name":"Library Quiet Study","capacity":40}'
+Creating a Room (HTTP 201 Created)
 
-Add a Sensor to the Room (201 Created)
+curl -i -X POST http://localhost:8080/api/v1/rooms \
+-H "Content-Type: application/json" \
+-d '{"id":"LIB-301","name":"Library Quiet Study","capacity":40}'
 
-curl -i -X POST http://localhost:8080/api/v1/sensors -H "Content-Type: application/json" -d '{"id":"TEMP-001","type":"Temperature","status":"ACTIVE","currentValue":0,"roomId":"LIB-301"}'
+Registering a Sensor (HTTP 201 Created)
 
-Retrieve All Sensors (200 OK)
+curl -i -X POST http://localhost:8080/api/v1/sensors \
+-H "Content-Type: application/json" \
+-d '{"id":"TEMP-001","type":"Temperature","status":"ACTIVE","currentValue":0,"roomId":"LIB-301"}'
+
+Retrieving Sensor List (HTTP 200 OK)
 
 curl -i http://localhost:8080/api/v1/sensors
 
-Insert a Sensor Reading (201 Created)
+Submitting a Sensor Reading (HTTP 201 Created)
 
-curl -i -X POST http://localhost:8080/api/v1/sensors/TEMP-001/readings -H "Content-Type: application/json" -d '{"id":"R-001","timestamp":1710000000000,"value":23.5}'
+curl -i -X POST http://localhost:8080/api/v1/sensors/TEMP-001/readings \
+-H "Content-Type: application/json" \
+-d '{"id":"R-001","timestamp":1710000000000,"value":23.5}'
 
-Remove a Sensor (204 No Content)
+Deleting a Sensor (HTTP 204 No Content)
 
 curl -i -X DELETE http://localhost:8080/api/v1/sensors/TEMP-001
 
