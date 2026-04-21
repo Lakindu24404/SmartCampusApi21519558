@@ -1,127 +1,57 @@
-# SmartCampus API (JAX-RS)
+API Design Summary
+Base URL: /api/v1 (configured using @ApplicationPath in the JAX-RS setup).
+Available Resources:
+Rooms: /rooms — Provides full CRUD operations for Room entities (fields: id, name, capacity).
+Sensors: /sensors — Supports CRUD operations for Sensor entities (fields: id, type, status, currentValue, roomId). Note that the sensor ID cannot be modified once created.
+Readings: /sensors/{sensorId}/readings — A nested resource handling SensorReading entities (fields: id, timestamp, value). Creating a reading also updates the currentValue of the associated sensor.
+Data Storage: Uses an in-memory DataStore, meaning all data will be cleared when the server restarts.
+Error Handling: Returns standard HTTP responses such as:
+400 Bad Request
+404 Not Found
+409 Conflict
+422 Unprocessable Entity
+403 Forbidden (for rule violations)
+Build and Run Instructions
 
-## 📌 Overview
+Requirements: Java 11 or higher and Maven installed.
+Default URL: http://localhost:8080
 
-SmartCampus API is a RESTful web service built using JAX-RS for managing university rooms, sensors, and sensor readings. It follows REST principles including resource-based design, proper HTTP methods, and structured JSON responses.
+Option A: Run using Embedded Jetty
+Open PowerShell in the project directory.
+Execute: mvn clean package
+Start the server: mvn jetty:run
+Access the API at: http://localhost:8080/api/v1
+Option B: Deploy on External Tomcat
+Run: mvn clean package
+Copy the generated target/ROOT.war file into %TOMCAT_HOME%\webapps\ROOT.war
+Restart or start the Tomcat server.
+Open: http://localhost:8080/api/v1
+Option C: Use NetBeans with Built-in Tomcat
+Import the Maven project into NetBeans.
+Ensure the finalName is set to ROOT, or configure the context path as / via Project Properties → Run.
+Build and deploy the project, then start the server.
+Navigate to: http://localhost:8080/api/v1
+Sample curl Commands (PowerShell Compatible)
 
-This implementation strictly follows coursework requirements:
+Create a Room (201 Created)
 
-- ✅ JAX-RS (Jersey)
-- ✅ In-memory storage (HashMap / ArrayList)
-- ❌ No database used
+curl -i -X POST http://localhost:8080/api/v1/rooms -H "Content-Type: application/json" -d '{"id":"LIB-301","name":"Library Quiet Study","capacity":40}'
 
----
+Add a Sensor to the Room (201 Created)
 
-## ⚙️ Setup Instructions
+curl -i -X POST http://localhost:8080/api/v1/sensors -H "Content-Type: application/json" -d '{"id":"TEMP-001","type":"Temperature","status":"ACTIVE","currentValue":0,"roomId":"LIB-301"}'
 
-### Prerequisites
+Retrieve All Sensors (200 OK)
 
-- Java JDK 8+
-- Maven
+curl -i http://localhost:8080/api/v1/sensors
 
-### Steps
+Insert a Sensor Reading (201 Created)
 
-```bash
-# Clone repository
-git clone https://github.com/Lakindu24404/SmartCampusApi21519558.git
+curl -i -X POST http://localhost:8080/api/v1/sensors/TEMP-001/readings -H "Content-Type: application/json" -d '{"id":"R-001","timestamp":1710000000000,"value":23.5}'
 
-# Navigate
-cd SmartCampusApi21519558
+Remove a Sensor (204 No Content)
 
-# Build project
-mvn clean install
-
-# Run server
-mvn exec:java
-```
-
-Server runs at:
-
-```
-http://localhost:8080/api/v1
-```
-
----
-
-## 🔗 API Endpoints
-
-### 🔹 Discovery Endpoint
-
-```bash
-curl -X GET http://localhost:8080/api/v1
-```
-
----
-
-### 🔹 Rooms
-
-#### Get all rooms
-
-```bash
-curl -X GET http://localhost:8080/api/v1/rooms
-```
-
-#### Create room
-
-```bash
-curl -X POST http://localhost:8080/api/v1/rooms \
--H "Content-Type: application/json" \
--d '{"id":"LIB-301","name":"Library","capacity":50}'
-```
-
-#### Get room by ID
-
-```bash
-curl -X GET http://localhost:8080/api/v1/rooms/LIB-301
-```
-
-#### Delete room
-
-```bash
-curl -X DELETE http://localhost:8080/api/v1/rooms/LIB-301
-```
-
----
-
-### 🔹 Sensors
-
-#### Create sensor
-
-```bash
-curl -X POST http://localhost:8080/api/v1/sensors \
--H "Content-Type: application/json" \
--d '{"id":"TEMP-001","type":"Temperature","status":"ACTIVE","roomId":"LIB-301"}'
-```
-
-#### Get sensors
-
-```bash
-curl -X GET http://localhost:8080/api/v1/sensors
-```
-
-#### Filter sensors
-
-```bash
-curl -X GET "http://localhost:8080/api/v1/sensors?type=Temperature"
-```
-
----
-
-### 🔹 Sensor Readings
-
-#### Add reading
-
-```bash
-curl -X POST http://localhost:8080/api/v1/sensors/TEMP-001/readings
--H "Content-Type: application/json"
--d '{"value":25.5}'
-```
-
-#### Get readings
-
-```bash
-curl -X GET http://localhost:8080/api/v1/sensors/TEMP-001/readings
-```
+curl -i -X DELETE http://localhost:8080/api/v1/sensors/TEMP-001
 
 ---
 

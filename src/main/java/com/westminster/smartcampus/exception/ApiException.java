@@ -7,6 +7,7 @@ public abstract class ApiException extends RuntimeException {
         super(message);
         this.code = code;
     }
+    // standard getter
     public String getCode() {
         return code;
     }

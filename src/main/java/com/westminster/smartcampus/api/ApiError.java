@@ -4,6 +4,7 @@ package com.westminster.smartcampus.api;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Instant;
 @JsonInclude(JsonInclude.Include.NON_NULL)
+    // main class here
 public class ApiError {
     private String code;
     private String message;
@@ -20,36 +21,43 @@ public class ApiError {
         this.path = path;
         this.timestamp = Instant.now().toString();
     }
+    // standard getter
     public String getCode() {
         return code;
     }
+    // setting data
     public void setCode(String code) {
         this.code = code;
     }
+    // standard getter
     public String getMessage() {
         return message;
     }
-    // just what i need
+    // setting data
     public void setMessage(String message) {
         this.message = message;
     }
+    // standard getter
     public Integer getStatus() {
         return status;
     }
+    // setting data
     public void setStatus(Integer status) {
         this.status = status;
     }
+    // standard getter
     public String getPath() {
         return path;
     }
-    // setting this up
+    // setting data
     public void setPath(String path) {
         this.path = path;
     }
-    // setting this up
+    // standard getter
     public String getTimestamp() {
         return timestamp;
     }
+    // setting data
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }

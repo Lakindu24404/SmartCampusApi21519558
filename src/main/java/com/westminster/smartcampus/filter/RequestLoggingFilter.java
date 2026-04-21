@@ -8,7 +8,7 @@ import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
 import java.io.IOException;
 @Provider
-    // lakindu's code :)
+    // main class here
 public class RequestLoggingFilter implements ContainerRequestFilter, ContainerResponseFilter {
     private static final String START_NANOS = "smartcampus.startNanos";
     @Override
@@ -17,7 +17,6 @@ public class RequestLoggingFilter implements ContainerRequestFilter, ContainerRe
         System.out.println("--> " + requestContext.getMethod() + " " + requestContext.getUriInfo().getRequestUri());
     }
     @Override
-    // setting this up
     public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
         long start = 0L;
         Object prop = requestContext.getProperty(START_NANOS);

@@ -9,8 +9,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
+    // main class here
 public class ApiDiscoveryResource {
     @GET
+    // standard getter
     public Map<String, Object> getDiscovery() {
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("name", "Smart Campus API");

@@ -19,15 +19,17 @@ import java.net.URI;
 import java.util.Collection;
 @Path("/rooms")
 @Produces(MediaType.APPLICATION_JSON)
+    // main class here
 public class CampusRoomResource {
     private final MemoryDataStore dataStore = MemoryDataStore.getInstance();
     @GET
+    // standard getter
     public Collection<CampusRoom> getAllRooms() {
         return dataStore.getAllRooms();
     }
     @GET
     @Path("/{id}")
-    // just what i need
+    // api response
     public Response getRoomById(@PathParam("id") String id) {
         CampusRoom campusRoom = dataStore.getRoom(id);
         if (campusRoom == null) {
@@ -37,6 +39,7 @@ public class CampusRoomResource {
     }
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
+    // api response
     public Response createRoom(CampusRoom campusRoom) {
         if (campusRoom == null || campusRoom.getId() == null || campusRoom.getId().trim().isEmpty()) {
             throw new BadRequestException("CampusRoom id is required");
@@ -61,7 +64,7 @@ public class CampusRoomResource {
     }
     @DELETE
     @Path("/{id}")
-    // keeping it simple
+    // api response
     public Response deleteRoom(@PathParam("id") String id) {
         CampusRoom campusRoom = dataStore.getRoom(id);
         if (campusRoom == null) {

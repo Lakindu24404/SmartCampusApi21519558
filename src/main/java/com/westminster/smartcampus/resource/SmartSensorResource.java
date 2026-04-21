@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.List;
 @Path("/sensors")
 @Produces(MediaType.APPLICATION_JSON)
-    // doing it my way here
+    // main class here
 public class SmartSensorResource {
     private final MemoryDataStore dataStore = MemoryDataStore.getInstance();
     @GET
@@ -45,6 +45,7 @@ public class SmartSensorResource {
     }
     @GET
     @Path("/{sensorId}")
+    // api response
     public Response getSensorById(@PathParam("sensorId") String sensorId) {
         SmartSensor smartSensor = dataStore.getSensor(sensorId);
         if (smartSensor == null) {
@@ -58,7 +59,7 @@ public class SmartSensorResource {
     }
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    // just what i need
+    // api response
     public Response createSensor(SmartSensor smartSensor) {
         validateSensorForCreate(smartSensor);
         CampusRoom campusRoom = dataStore.getRoom(smartSensor.getRoomId());
@@ -81,6 +82,7 @@ public class SmartSensorResource {
     @PUT
     @Path("/{sensorId}")
     @Consumes(MediaType.APPLICATION_JSON)
+    // api response
     public Response updateSensor(@PathParam("sensorId") String sensorId, SmartSensor updated) {
         SmartSensor existing = dataStore.getSensor(sensorId);
         if (existing == null) {
@@ -122,7 +124,7 @@ public class SmartSensorResource {
     }
     @DELETE
     @Path("/{sensorId}")
-    // doing it my way here
+    // api response
     public Response deleteSensor(@PathParam("sensorId") String sensorId) {
         SmartSensor existing = dataStore.getSensor(sensorId);
         if (existing == null) {

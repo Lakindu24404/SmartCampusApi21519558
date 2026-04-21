@@ -3,6 +3,7 @@
 package com.westminster.smartcampus.model;
 import java.util.ArrayList;
 import java.util.List;
+    // main class here
 public class CampusRoom {
     private String id;
     private String name;
@@ -15,31 +16,35 @@ public class CampusRoom {
         this.name = name;
         this.capacity = capacity;
     }
+    // return id
     public String getId() {
         return id;
     }
+    // set id value
     public void setId(String id) {
         this.id = id;
     }
-    // no need for complicated stuff here
+    // standard getter
     public String getName() {
         return name;
     }
-    // no need for complicated stuff here
+    // setting data
     public void setName(String name) {
         this.name = name;
     }
-    // keeping it simple
+    // standard getter
     public int getCapacity() {
         return capacity;
     }
+    // setting data
     public void setCapacity(int capacity) {
         this.capacity = capacity;
     }
+    // standard getter
     public List<String> getSensorIds() {
         return sensorIds;
     }
-    // doing it my way here
+    // setting data
     public void setSensorIds(List<String> sensorIds) {
         this.sensorIds = (sensorIds == null) ? new ArrayList<>() : sensorIds;
     }

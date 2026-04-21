@@ -10,11 +10,12 @@ import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 @Provider
-    // doing it my way here
+    // main class here
 public class ApiExceptionMapper implements ExceptionMapper<ApiException> {
     @Context
     private UriInfo uriInfo;
     @Override
+    // api response
     public Response toResponse(ApiException exception) {
         int status = mapStatus(exception);
         String path = uriInfo != null && uriInfo.getRequestUri() != null ? uriInfo.getRequestUri().getPath() : null;

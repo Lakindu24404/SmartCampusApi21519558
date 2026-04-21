@@ -17,9 +17,11 @@ public final class MemoryDataStore {
     private final Map<String, List<SensorDataReading>> readingsBySensorId = new ConcurrentHashMap<>();
     private MemoryDataStore() {
     }
+    // standard getter
     public static MemoryDataStore getInstance() {
         return INSTANCE;
     }
+    // standard getter
     public Collection<CampusRoom> getAllRooms() {
         return rooms.values();
     }
@@ -35,6 +37,7 @@ public final class MemoryDataStore {
     public CampusRoom deleteRoom(String id) {
         return rooms.remove(id);
     }
+    // standard getter
     public Collection<SmartSensor> getAllSensors() {
         return sensors.values();
     }
@@ -51,7 +54,6 @@ public final class MemoryDataStore {
         readingsBySensorId.remove(id);
         return sensors.remove(id);
     }
-    // this works better
     public List<SensorDataReading> getReadingsForSensor(String sensorId) {
         if (sensorId == null) {
             throw new IllegalArgumentException("sensorId must not be null");

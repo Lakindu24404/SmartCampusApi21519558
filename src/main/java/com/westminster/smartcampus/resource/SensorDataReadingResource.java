@@ -19,17 +19,19 @@ import java.net.URI;
 import java.util.List;
 @Path("/readings")
 @Produces(MediaType.APPLICATION_JSON)
+    // main class here
 public class SensorDataReadingResource {
     private final String sensorId;
     private final MemoryDataStore dataStore = MemoryDataStore.getInstance();
     public SensorDataReadingResource(@PathParam("sensorId") String sensorId) {
         this.sensorId = sensorId;
     }
+    // standard getter
     public String getSensorId() {
         return sensorId;
     }
     @GET
-    // just what i need
+    // standard getter
     public Response getReadingHistory() {
         SmartSensor smartSensor = dataStore.getSensor(sensorId);
         if (smartSensor == null) {
@@ -40,7 +42,7 @@ public class SensorDataReadingResource {
     }
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    // setting this up
+    // api response
     public Response addReading(SensorDataReading reading) {
         SmartSensor smartSensor = dataStore.getSensor(sensorId);
         if (smartSensor == null) {
