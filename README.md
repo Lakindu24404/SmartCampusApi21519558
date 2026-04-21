@@ -1,5 +1,16 @@
 # Smart Campus API — Overview and Implementation Guide - 21519558
 
+---
+
+## 🎓 Academic Information
+
+- **Name:** Lakindu Jayathilaka  
+- **University Registration:** 21519558 / 20241937  
+- **Degree:** (Hons) Computer Science  
+- **Module:** Client Server Architecture  
+
+---
+
 ## 1. Introduction
 
 The Smart Campus API is designed to facilitate the management of campus infrastructure through a RESTful web service architecture. It enables the handling of key entities such as rooms, sensors, and sensor readings. The API follows standard HTTP conventions and is implemented using JAX-RS, ensuring scalability, modularity, and ease of integration with client applications.
