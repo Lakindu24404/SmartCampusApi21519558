@@ -21,6 +21,12 @@ public class DiscoveryResource { // api entry point with hateoas links
         
         Map<String, Object> response = new HashMap<>();
         response.put("message", "Smart Campus API v1");
+        response.put("version", "1.0.0");
+        
+        Map<String, String> admin = new HashMap<>();
+        admin.put("name", "Lead Backend Architect");
+        admin.put("email", "admin@smartcampus.westminster.ac.uk");
+        response.put("admin_contact", admin);
         
         // build hateoas links
         Map<String, String> links = new HashMap<>();

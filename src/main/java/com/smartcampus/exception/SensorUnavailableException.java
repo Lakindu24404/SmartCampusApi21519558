@@ -5,9 +5,9 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 public class SensorUnavailableException extends WebApplicationException { // for 403s on sensor stuff
-    public SensorUnavailableException(String sensorId) {
+    public SensorUnavailableException(String message) {
         super(Response.status(Response.Status.FORBIDDEN)
-                .entity("sensor " + sensorId + " is unavailable")
+                .entity(message)
                 .build());
     }
 }

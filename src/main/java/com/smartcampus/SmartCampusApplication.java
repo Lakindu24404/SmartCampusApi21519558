@@ -38,8 +38,6 @@ public class SmartCampusApplication extends Application { // app entry point
         classes.add(DiscoveryResource.class);
         classes.add(RoomResource.class);
         classes.add(SensorResource.class);
-        classes.add(SensorReadingResource.class);
-
         // register exception mappers
         classes.add(ValidationExceptionMapper.class);
         classes.add(RoomNotEmptyExceptionMapper.class);

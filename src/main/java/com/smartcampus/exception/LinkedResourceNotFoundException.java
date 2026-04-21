@@ -6,7 +6,7 @@ import javax.ws.rs.core.Response;
 
 public class LinkedResourceNotFoundException extends WebApplicationException { // for 404s when linking stuff
     public LinkedResourceNotFoundException(String message) {
-        super(Response.status(Response.Status.NOT_FOUND)
+        super(Response.status(422)
                 .entity(message)
                 .build());
     }

@@ -13,8 +13,14 @@ public class SensorService { // handles logic for iot sensors
     private final SensorRepository sensorRepository = new SensorRepository();
     private final RoomRepository roomRepository = new RoomRepository();
 
-    public List<Sensor> getAllSensors() {
-        return sensorRepository.findAll();
+    public List<Sensor> getAllSensors(String type) {
+        List<Sensor> all = sensorRepository.findAll();
+        if (type != null && !type.isEmpty()) {
+            return all.stream()
+                      .filter(s -> type.equalsIgnoreCase(s.getType()))
+                      .collect(java.util.stream.Collectors.toList());
+        }
+        return all;
     }
 
     public Sensor getSensorById(String id) {
@@ -25,7 +31,7 @@ public class SensorService { // handles logic for iot sensors
         // room must exist to add sensor
         Room room = roomRepository.findById(sensor.getRoomId());
         if (room == null) {
-            throw new NotFoundException("no room found");
+            throw new com.smartcampus.exception.LinkedResourceNotFoundException("Room not found for id: " + sensor.getRoomId());
         }
         
         sensorRepository.save(sensor);

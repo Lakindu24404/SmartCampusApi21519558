@@ -11,7 +11,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.Map;
 
-@Path("/readings")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Reading History", description = "Monitor and record historical sensor data")
@@ -20,7 +19,6 @@ public class SensorReadingResource { // endpoints for sensor readings
     private final SensorReadingService readingService = new SensorReadingService();
 
     @GET
-    @Path("/{sensorId}")
     @Operation(summary = "Get reading history", description = "Returns a chronological log of all measurements recorded by a specific sensor.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved reading history")
     @ApiResponse(responseCode = "404", description = "Sensor not found")
@@ -29,7 +27,6 @@ public class SensorReadingResource { // endpoints for sensor readings
     }
 
     @POST
-    @Path("/{sensorId}")
     @Operation(summary = "Record a measurement", description = "Appends a new value to the reading history and updates the sensor's current state.")
     @ApiResponse(responseCode = "201", description = "Reading successfully recorded")
     @ApiResponse(responseCode = "400", description = "Missing value in payload")

@@ -27,6 +27,10 @@ public class SensorReadingService { // handles logic for recording history
         if (sensor == null) {
             throw new NotFoundException("sensor missing");
         }
+        
+        if ("MAINTENANCE".equalsIgnoreCase(sensor.getStatus())) {
+            throw new com.smartcampus.exception.SensorUnavailableException("Sensor is in MAINTENANCE mode and cannot accept readings.");
+        }
 
         // update the sensor's current value
         sensor.setCurrentValue(value);

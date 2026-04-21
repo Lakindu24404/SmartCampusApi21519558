@@ -22,10 +22,10 @@ public class SensorResource { // api endpoints for sensors
     private final SensorService sensorService = new SensorService();
 
     @GET
-    @Operation(summary = "List all sensors", description = "Returns a complete list of all sensors deployed across all rooms.")
+    @Operation(summary = "List all sensors", description = "Returns a complete list of all sensors deployed across all rooms. Supports optional filtering by type.")
     @ApiResponse(responseCode = "200", description = "Successfully retrieved sensor list")
-    public Response getAllSensors() {
-        return Response.ok(sensorService.getAllSensors()).build();
+    public Response getAllSensors(@QueryParam("type") String type) {
+        return Response.ok(sensorService.getAllSensors(type)).build();
     }
 
     @POST
@@ -59,5 +59,13 @@ public class SensorResource { // api endpoints for sensors
     public Response deleteSensor(@PathParam("sensorId") String sensorId) {
         sensorService.deleteSensor(sensorId);
         return Response.noContent().build();
+    }
+
+    @Path("/{sensorId}/readings")
+    @Operation(summary = "Sensor Readings Sub-resource", description = "Locator for reading history operations.")
+    public SensorReadingResource getReadingsResource(@PathParam("sensorId") String sensorId) {
+        // According to JAX-RS Sub-resource locator pattern, return the instantiated class or the class type
+        // In our case, returning the initialized instance works dynamically.
+        return new SensorReadingResource();
     }
 }
