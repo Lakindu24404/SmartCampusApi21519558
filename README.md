@@ -48,6 +48,7 @@ The application is accessible by default at:
 ### 3.2 Execution Methods
 
 **A. Embedded Jetty Server**
+
 1. Open a PowerShell terminal within the project directory.
 2. Execute the build command:
    ```bash
@@ -60,6 +61,7 @@ The application is accessible by default at:
 4. Access the API via: `http://localhost:8080/api/v1`
 
 **B. Deployment on Apache Tomcat**
+
 1. Build the project using:
    ```bash
    mvn clean package
@@ -69,12 +71,13 @@ The application is accessible by default at:
 4. Access the deployed application at: `http://localhost:8080/api/v1`
 
 **C. NetBeans Integrated Deployment**
+
 1. Import the Maven project into the NetBeans IDE.
 2. Ensure the project’s `finalName` is configured as `ROOT`, or set the context path to `/` via Project Properties.
 3. Perform a clean build and deploy the project.
 4. Start the application server and access the API at: `http://localhost:8080/api/v1`
 
-## 4. API Usage Examples
+## 3.3. API Usage Examples
 
 The following examples demonstrate typical interactions with the API using curl commands:
 
