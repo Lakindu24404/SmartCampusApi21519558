@@ -1,18 +1,13 @@
 // Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.model;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 
-@Entity
-@Table(name = "sensors")
 public class Sensor { // campus iot sensor
 
-    @Id
-    @Column(length = 20)
     @NotBlank(message = "Sensor ID is required")
-    private String id; 
+    private String id;
 
     @NotBlank(message = "Sensor type is required")
     private String type; // temp, co2, etc

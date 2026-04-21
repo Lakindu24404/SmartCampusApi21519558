@@ -1,51 +1,28 @@
 // Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.repository;
 
-import com.smartcampus.util.HibernateUtil;
-import org.hibernate.Session;
-import org.hibernate.Transaction;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public abstract class BaseRepository<T, ID> { // generic crud for all repos
-    private final Class<T> type;
+public abstract class BaseRepository<T, ID> { // generic in-memory crud for all repos
 
-    protected BaseRepository(Class<T> type) {
-        this.type = type;
-    }
+    protected abstract Map<ID, T> store();
+    protected abstract ID getId(T entity);
 
     public void save(T entity) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.saveOrUpdate(entity);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            e.printStackTrace();
-        }
+        store().put(getId(entity), entity);
     }
 
     public T findById(ID id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.get(type, (java.io.Serializable) id);
-        }
+        return store().get(id);
     }
 
     public List<T> findAll() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from " + type.getName(), type).list();
-        }
+        return new ArrayList<>(store().values());
     }
 
     public void delete(T entity) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.delete(entity);
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            e.printStackTrace();
-        }
+        store().remove(getId(entity));
     }
 }

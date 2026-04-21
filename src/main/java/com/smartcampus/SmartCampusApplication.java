@@ -23,7 +23,7 @@ import java.util.Set;
     info = @Info(
         title = "Smart Campus IoT API",
         version = "1.0.0",
-        description = "RESTful API for managing rooms and sensors. Features Hibernate.",
+        description = "RESTful API for managing campus rooms and IoT sensors using in-memory storage.",
         license = @License(name = "University of Westminster")
     ),
     servers = @Server(url = "/api/v1")

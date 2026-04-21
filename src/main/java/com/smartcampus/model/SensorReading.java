@@ -1,21 +1,17 @@
 // Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.model;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-@Entity
-@Table(name = "sensor_readings")
 public class SensorReading { // log of sensor readings
 
-    @Id
-    private String id; 
+    private String id;
 
     @NotNull(message = "Timestamp is required")
-    private long timestamp; 
+    private long timestamp;
 
-    private double value; 
+    private double value;
 
     @NotBlank(message = "Sensor ID is required")
     private String sensorId; // which sensor recorded this

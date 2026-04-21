@@ -1,32 +1,23 @@
 // Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.model;
 
-import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "rooms")
 public class Room { // physical campus room
 
-    @Id
-    @Column(length = 20)
     @NotBlank(message = "Room ID is required")
-    private String id; 
+    private String id;
 
     @NotBlank(message = "Room name is required")
-    @Column(nullable = false)
-    private String name; 
+    private String name;
 
     @Min(value = 1, message = "Capacity must be at least 1")
     private int capacity; // max people allowed
 
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "room_sensors", joinColumns = @JoinColumn(name = "room_id"))
-    @Column(name = "sensor_id")
-    private List<String> sensorIds = new ArrayList<>(); // list of sensors in here
+    private List<String> sensorIds = new ArrayList<>(); // list of sensors in this room
 
     public Room() {}
 

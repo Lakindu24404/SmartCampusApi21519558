@@ -1,21 +1,28 @@
 // Author: W2151955/ 20241937 / Lakindu Jayathilaka
 package com.smartcampus.repository;
 
+import com.smartcampus.data.DataStore;
 import com.smartcampus.model.SensorReading;
-import com.smartcampus.util.HibernateUtil;
-import org.hibernate.Session;
-import java.util.List;
 
-public class SensorReadingRepository extends BaseRepository<SensorReading, String> { // db access for reading history
-    public SensorReadingRepository() {
-        super(SensorReading.class);
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+public class SensorReadingRepository extends BaseRepository<SensorReading, String> { // in-memory store for reading history
+
+    @Override
+    protected Map<String, SensorReading> store() {
+        return DataStore.READINGS;
+    }
+
+    @Override
+    protected String getId(SensorReading entity) {
+        return entity.getId();
     }
 
     public List<SensorReading> findBySensorId(String sensorId) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.createQuery("from SensorReading where sensorId = :sid", SensorReading.class)
-                    .setParameter("sid", sensorId)
-                    .list();
-        }
+        return store().values().stream()
+                .filter(r -> sensorId.equals(r.getSensorId()))
+                .collect(Collectors.toList());
     }
 }
