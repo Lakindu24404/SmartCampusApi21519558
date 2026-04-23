@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Smart Campus API Tester</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg:       #0d0f14;
+    --surface:  #13161d;
+    --panel:    #1a1e28;
+    --border:   #252a38;
+    --accent:   #00e5a0;
+    --accent2:  #7b61ff;
+    --warn:     #ff6b35;
+    --danger:   #ff3b5c;
+    --text:     #e8eaf0;
+    --muted:    #6b7280;
+    --get:      #00e5a0;
+    --post:     #7b61ff;
+    --delete:   #ff3b5c;
+    --put:      #f59e0b;
+    --radius:   8px;
+    --mono:     'JetBrains Mono', monospace;
+    --sans:     'Syne', sans-serif;
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--mono); font-size: 13px; }
+
+  /* ---- layout ---- */
+  .app { display: grid; grid-template-columns: 300px 1fr; grid-template-rows: 56px 1fr; height: 100vh; overflow: hidden; }
+  .topbar { grid-column: 1/-1; background: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 16px; padding: 0 20px; }
+  .topbar-logo { font-family: var(--sans); font-size: 18px; font-weight: 800; color: var(--accent); letter-spacing: -0.5px; }
+  .topbar-sub { font-size: 11px; color: var(--muted); border-left: 1px solid var(--border); padding-left: 16px; margin-left: 4px; }
+  .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 8px var(--accent); margin-left: auto; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+  .status-label { font-size: 11px; color: var(--accent); margin-left: 6px; }
+
+  /* ---- sidebar ---- */
+  .sidebar { background: var(--surface); border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; }
+  .sidebar-section { padding: 14px 12px 6px; font-size: 10px; color: var(--muted); font-family: var(--sans); font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; }
+  .endpoint-btn { display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 14px; background: none; border: none; color: var(--text); cursor: pointer; text-align: left; transition: background .15s; border-radius: 0; font-family: var(--mono); font-size: 12px; }
+  .endpoint-btn:hover { background: var(--panel); }
+  .endpoint-btn.active { background: var(--panel); border-left: 2px solid var(--accent); }
+  .method-tag { font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 4px; min-width: 48px; text-align: center; font-family: var(--sans); }
+  .tag-get    { background: rgba(0,229,160,.15); color: var(--get); }
+  .tag-post   { background: rgba(123,97,255,.15); color: var(--post); }
+  .tag-delete { background: rgba(255,59,92,.15);  color: var(--delete); }
+  .tag-put    { background: rgba(245,158,11,.15); color: var(--put); }
+  .ep-path { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  /* ---- main ---- */
+  .main { display: flex; flex-direction: column; overflow: hidden; background: var(--bg); }
+  .request-pane { padding: 20px 24px 0; display: flex; flex-direction: column; gap: 14px; flex-shrink: 0; }
+  .section-title { font-family: var(--sans); font-size: 11px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+  .url-bar { display: flex; gap: 10px; align-items: center; }
+  .method-badge { font-size: 12px; font-weight: 700; padding: 8px 14px; border-radius: var(--radius); font-family: var(--sans); min-width: 72px; text-align: center; flex-shrink: 0; }
+  .url-input { flex: 1; background: var(--panel); border: 1px solid var(--border); color: var(--text); padding: 9px 14px; border-radius: var(--radius); font-family: var(--mono); font-size: 12px; outline: none; transition: border-color .2s; }
+  .url-input:focus { border-color: var(--accent); }
+  .send-btn { background: var(--accent); color: #000; border: none; padding: 9px 22px; border-radius: var(--radius); font-family: var(--sans); font-weight: 700; font-size: 12px; cursor: pointer; letter-spacing: .5px; transition: opacity .2s, transform .1s; flex-shrink: 0; }
+  .send-btn:hover { opacity: .85; }
+  .send-btn:active { transform: scale(.97); }
+  .send-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+  /* body editor */
+  .body-section { display: flex; flex-direction: column; }
+  .body-label { display: flex; align-items: center; justify-content: space-between; }
+  .body-toggle { display: flex; gap: 0; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .body-toggle button { background: none; border: none; color: var(--muted); padding: 4px 12px; font-family: var(--mono); font-size: 11px; cursor: pointer; transition: background .15s, color .15s; }
+  .body-toggle button.active { background: var(--panel); color: var(--accent); }
+  .body-editor { background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 12px 14px; font-family: var(--mono); font-size: 12px; color: var(--text); resize: vertical; min-height: 120px; outline: none; transition: border-color .2s; margin-top: 8px; }
+  .body-editor:focus { border-color: var(--accent2); }
+  .body-hint { font-size: 10px; color: var(--muted); margin-top: 5px; }
+
+  /* response */
+  .response-pane { flex: 1; overflow: hidden; display: flex; flex-direction: column; padding: 14px 24px 20px; gap: 10px; min-height: 0; }
+  .resp-header { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
+  .resp-status { display: flex; align-items: center; gap: 8px; }
+  .status-code { font-size: 14px; font-weight: 700; font-family: var(--sans); padding: 3px 10px; border-radius: 6px; }
+  .sc-2xx { background: rgba(0,229,160,.15); color: var(--get); }
+  .sc-4xx { background: rgba(245,158,11,.15); color: var(--put); }
+  .sc-5xx { background: rgba(255,59,92,.15); color: var(--delete); }
+  .resp-time { font-size: 11px; color: var(--muted); }
+  .resp-size { font-size: 11px; color: var(--muted); border-left: 1px solid var(--border); padding-left: 10px; }
+  .copy-btn { margin-left: auto; background: var(--panel); border: 1px solid var(--border); color: var(--muted); padding: 4px 12px; border-radius: 6px; font-family: var(--mono); font-size: 11px; cursor: pointer; transition: color .15s; }
+  .copy-btn:hover { color: var(--accent); }
+  .resp-body { flex: 1; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px; overflow-y: auto; font-family: var(--mono); font-size: 12px; line-height: 1.7; white-space: pre-wrap; word-break: break-word; min-height: 0; }
+  .resp-body.empty { display: flex; align-items: center; justify-content: center; color: var(--muted); font-size: 12px; }
+  .resp-body .jk { color: #79c0ff; }
+  .resp-body .jv-str { color: var(--accent); }
+  .resp-body .jv-num { color: #ffa657; }
+  .resp-body .jv-bool { color: var(--accent2); }
+  .resp-body .jv-null { color: var(--delete); }
+  .resp-body .error-msg { color: var(--delete); }
+
+  /* divider */
+  .divider { height: 1px; background: var(--border); margin: 4px 0; }
+
+  /* empty state */
+  .empty-state { flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:12px; color:var(--muted); }
+  .empty-icon { font-size: 40px; opacity: .3; }
+  .empty-text { font-size: 12px; }
+
+  /* scrollbar */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* loading spinner */
+  .spinner { width: 16px; height: 16px; border: 2px solid rgba(0,229,160,.2); border-top-color: var(--accent); border-radius: 50%; animation: spin .6s linear infinite; display: inline-block; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .tag-get-b { color: var(--get); font-weight:700; }
+  .tag-post-b { color: var(--post); font-weight:700; }
+  .tag-del-b { color: var(--delete); font-weight:700; }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <span class="topbar-logo">⬡ SmartCampus</span>
+    <span class="topbar-sub">REST API Tester · JAX-RS / Jersey</span>
+    <div class="status-dot" id="statusDot"></div>
+    <span class="status-label" id="statusLabel">Connecting…</span>
+  </header>
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar"></nav>
+
+  <!-- MAIN -->
+  <main class="main">
+    <div class="request-pane" id="requestPane" style="display:none">
+      <div>
+        <div class="section-title">Request</div>
+        <div class="url-bar">
+          <span class="method-badge" id="methodBadge"></span>
+          <input class="url-input" id="urlInput" readonly/>
+          <button class="send-btn" id="sendBtn" onclick="sendRequest()">Send ▶</button>
+        </div>
+      </div>
+      <div class="body-section" id="bodySection" style="display:none">
+        <div class="body-label">
+          <div class="section-title" style="margin:0">Request Body</div>
+          <div class="body-toggle">
+            <button class="active" onclick="setBodyMode('raw')">Raw JSON</button>
+          </div>
+        </div>
+        <textarea class="body-editor" id="bodyEditor" placeholder='{ "id": "...", "name": "..." }'></textarea>
+        <div class="body-hint">Content-Type: application/json</div>
+      </div>
+    </div>
+    <div id="emptyState" class="empty-state">
+      <div class="empty-icon">⌁</div>
+      <div class="empty-text">Select an endpoint from the sidebar to begin</div>
+    </div>
+    <div class="response-pane" id="responsePane" style="display:none">
+      <div class="section-title">Response</div>
+      <div class="resp-header" id="respHeader"></div>
+      <pre class="resp-body" id="respBody"></pre>
+    </div>
+  </main>
+</div>
+
+<script>
+const BASE = window.location.origin + '/smart-campus-api/api/v1';
+
+// ── Endpoint definitions ─────────────────────────────────────────
+const ENDPOINTS = [
+  { group: 'Discovery' },
+  { id:'disc-1', method:'GET', label:'API Discovery', path:'/', desc:'API metadata & resource map' },
+
+  { group: 'Rooms' },
+  { id:'room-1', method:'GET',    label:'List all rooms',   path:'/rooms' },
+  { id:'room-2', method:'POST',   label:'Create room',      path:'/rooms',
+    body: '{\n  "id": "LIB-301",\n  "name": "Library Quiet Study",\n  "capacity": 40\n}' },
+  { id:'room-3', method:'GET',    label:'Get room by ID',   path:'/rooms/{roomId}',    param:'roomId', placeholder:'e.g. LIB-301' },
+  { id:'room-4', method:'DELETE', label:'Delete room',      path:'/rooms/{roomId}',    param:'roomId', placeholder:'e.g. LIB-301' },
+
+  { group: 'Sensors' },
+  { id:'sen-1', method:'GET',    label:'List all sensors',  path:'/sensors' },
+  { id:'sen-2', method:'GET',    label:'Filter by type',    path:'/sensors?type={type}', param:'type', placeholder:'e.g. CO2' },
+  { id:'sen-3', method:'POST',   label:'Register sensor',   path:'/sensors',
+    body: '{\n  "id": "CO2-001",\n  "type": "CO2",\n  "status": "ACTIVE",\n  "currentValue": 412.5,\n  "roomId": "LIB-301"\n}' },
+  { id:'sen-4', method:'GET',    label:'Get sensor by ID',  path:'/sensors/{sensorId}', param:'sensorId', placeholder:'e.g. CO2-001' },
+  { id:'sen-5', method:'DELETE', label:'Delete sensor',     path:'/sensors/{sensorId}', param:'sensorId', placeholder:'e.g. CO2-001' },
+
+  { group: 'Sensor Readings' },
+  { id:'read-1', method:'GET',  label:'Get reading history', path:'/sensors/{sensorId}/readings', param:'sensorId', placeholder:'e.g. CO2-001' },
+  { id:'read-2', method:'POST', label:'Add new reading',     path:'/sensors/{sensorId}/readings', param:'sensorId', placeholder:'e.g. CO2-001',
+    body: '{\n  "id": "READ-' + Date.now() + '",\n  "timestamp": ' + Date.now() + ',\n  "value": 418.3\n}' },
+];
+
+let current = null;
+
+// ── Build sidebar ────────────────────────────────────────────────
+function buildSidebar() {
+  const nav = document.getElementById('sidebar');
+  ENDPOINTS.forEach(ep => {
+    if (ep.group) {
+      const sec = document.createElement('div');
+      sec.className = 'sidebar-section';
+      sec.textContent = ep.group;
+      nav.appendChild(sec);
+      if (ep.group !== 'Discovery') {
+        const div = document.createElement('div');
+        div.className = 'divider';
+        nav.appendChild(div);
+      }
+      return;
+    }
+    const btn = document.createElement('button');
+    btn.className = 'endpoint-btn';
+    btn.id = 'btn-' + ep.id;
+    btn.innerHTML = `<span class="method-tag tag-${ep.method.toLowerCase()}">${ep.method}</span><span class="ep-path">${ep.label}</span>`;
+    btn.onclick = () => selectEndpoint(ep);
+    nav.appendChild(btn);
+  });
+}
+
+function selectEndpoint(ep) {
+  // clear active
+  document.querySelectorAll('.endpoint-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('btn-' + ep.id).classList.add('active');
+  current = ep;
+
+  // hide empty state
+  document.getElementById('emptyState').style.display = 'none';
+  document.getElementById('requestPane').style.display = 'flex';
+
+  // method badge
+  const badge = document.getElementById('methodBadge');
+  const colors = { GET: 'var(--get)', POST: 'var(--post)', DELETE: 'var(--delete)', PUT: 'var(--put)' };
+  const bgs    = { GET: 'rgba(0,229,160,.12)', POST: 'rgba(123,97,255,.12)', DELETE: 'rgba(255,59,92,.12)', PUT: 'rgba(245,158,11,.12)' };
+  badge.textContent = ep.method;
+  badge.style.color = colors[ep.method];
+  badge.style.background = bgs[ep.method];
+
+  // build URL — if has param, prompt for value
+  let url = BASE + ep.path;
+  if (ep.param) {
+    const val = prompt('Enter value for ' + ep.param + ' (' + (ep.placeholder||'') + '):', '');
+    if (val !== null && val.trim() !== '') {
+      url = BASE + ep.path.replace('{' + ep.param + '}', encodeURIComponent(val.trim()));
+    } else {
+      url = BASE + ep.path.replace('{' + ep.param + '}', '');
+    }
+  }
+  document.getElementById('urlInput').value = url;
+
+  // body section
+  const bodySection = document.getElementById('bodySection');
+  if (ep.body) {
+    bodySection.style.display = 'flex';
+    document.getElementById('bodyEditor').value = ep.body;
+  } else {
+    bodySection.style.display = 'none';
+  }
+
+  // reset response
+  document.getElementById('responsePane').style.display = 'none';
+  document.getElementById('respBody').className = 'resp-body empty';
+  document.getElementById('respBody').innerHTML = 'Hit <strong>Send</strong> to execute the request';
+  document.getElementById('responsePane').style.display = 'flex';
+  document.getElementById('respHeader').innerHTML = '';
+}
+
+// ── Send request ────────────────────────────────────────────────
+async function sendRequest() {
+  if (!current) return;
+  const url = document.getElementById('urlInput').value;
+  const btn = document.getElementById('sendBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Sending…';
+
+  const opts = { method: current.method, headers: {} };
+  if (current.body) {
+    opts.headers['Content-Type'] = 'application/json';
+    opts.body = document.getElementById('bodyEditor').value;
+  }
+
+  const t0 = performance.now();
+  let status = 0, statusText = '', body = '', size = 0;
+  try {
+    const res = await fetch(url, opts);
+    const elapsed = Math.round(performance.now() - t0);
+    status = res.status;
+    statusText = res.statusText;
+    body = await res.text();
+    size = new Blob([body]).size;
+    showResponse(status, statusText, body, elapsed, size);
+  } catch (err) {
+    const elapsed = Math.round(performance.now() - t0);
+    showError(err.message, elapsed);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = 'Send ▶';
+  }
+}
+
+function showResponse(status, statusText, bodyText, elapsed, size) {
+  const pane = document.getElementById('responsePane');
+  pane.style.display = 'flex';
+
+  // status badge
+  const cls = status >= 500 ? 'sc-5xx' : status >= 400 ? 'sc-4xx' : 'sc-2xx';
+  document.getElementById('respHeader').innerHTML = `
+    <div class="resp-status">
+      <span class="status-code ${cls}">${status} ${statusText}</span>
+    </div>
+    <span class="resp-time">${elapsed} ms</span>
+    <span class="resp-size">${(size/1024).toFixed(1)} KB</span>
+    <button class="copy-btn" onclick="copyResp()">⎘ Copy</button>
+  `;
+
+  // pretty-print JSON
+  const el = document.getElementById('respBody');
+  el.className = 'resp-body';
+  try {
+    const obj = JSON.parse(bodyText);
+    el.innerHTML = syntaxHighlight(JSON.stringify(obj, null, 2));
+  } catch {
+    el.textContent = bodyText || '(empty body)';
+  }
+}
+
+function showError(msg, elapsed) {
+  document.getElementById('responsePane').style.display = 'flex';
+  document.getElementById('respHeader').innerHTML = `<span class="status-code sc-5xx">Network Error</span><span class="resp-time">${elapsed} ms</span>`;
+  const el = document.getElementById('respBody');
+  el.className = 'resp-body';
+  el.innerHTML = `<span class="error-msg">✖ ${msg}\n\nMake sure the server is running at:\n${window.location.origin}/smart-campus-api/</span>`;
+}
+
+function syntaxHighlight(json) {
+  return json.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/("(\\u[a-zA-Z0-9]{4}|\\[^u]|[^\\"])*"(\s*:)?|\b(true|false|null)\b|-?\d+(?:\.\d*)?(?:[eE][+\-]?\d+)?)/g, m => {
+      let cls = 'jv-num';
+      if (/^"/.test(m)) cls = /:$/.test(m) ? 'jk' : 'jv-str';
+      else if (/true|false/.test(m)) cls = 'jv-bool';
+      else if (/null/.test(m)) cls = 'jv-null';
+      return `<span class="${cls}">${m}</span>`;
+    });
+}
+
+function copyResp() {
+  const text = document.getElementById('respBody').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector('.copy-btn');
+    if (btn) { btn.textContent = '✓ Copied'; setTimeout(() => btn.textContent = '⎘ Copy', 1500); }
+  });
+}
+
+// ── Check server status ──────────────────────────────────────────
+async function checkStatus() {
+  const dot = document.getElementById('statusDot');
+  const lbl = document.getElementById('statusLabel');
+  try {
+    const r = await fetch(BASE + '/', { method: 'GET' });
+    if (r.ok) {
+      dot.style.background = 'var(--accent)';
+      dot.style.boxShadow  = '0 0 8px var(--accent)';
+      lbl.style.color = 'var(--accent)';
+      lbl.textContent = 'API Online';
+    } else {
+      throw new Error(r.status);
+    }
+  } catch {
+    dot.style.background = 'var(--delete)';
+    dot.style.boxShadow  = '0 0 8px var(--delete)';
+    lbl.style.color = 'var(--delete)';
+    lbl.textContent = 'API Offline';
+  }
+}
+
+// ── Init ─────────────────────────────────────────────────────────
+buildSidebar();
+checkStatus();
+setInterval(checkStatus, 10000);
+
+// send on Ctrl+Enter
+document.addEventListener('keydown', e => {
+  if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') sendRequest();
+});
+</script>
+</body>
+</html>

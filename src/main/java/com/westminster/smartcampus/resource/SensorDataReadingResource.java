@@ -17,44 +17,54 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.net.URI;
 import java.util.List;
-@Path("/readings")
+
 @Produces(MediaType.APPLICATION_JSON)
-    // main class here
 public class SensorDataReadingResource {
     private final String sensorId;
     private final MemoryDataStore dataStore = MemoryDataStore.getInstance();
+
     public SensorDataReadingResource(@PathParam("sensorId") String sensorId) {
         this.sensorId = sensorId;
     }
-    // standard getter
+
     public String getSensorId() {
         return sensorId;
     }
+
     @GET
-    // standard getter
     public Response getReadingHistory() {
         SmartSensor smartSensor = dataStore.getSensor(sensorId);
         if (smartSensor == null) {
-            throw new NotFoundException("SmartSensor not found");
+            throw new NotFoundException("Sensor not found: " + sensorId);
         }
         List<SensorDataReading> history = dataStore.getReadingsForSensor(sensorId);
         return Response.ok(history).build();
     }
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    // api response
     public Response addReading(SensorDataReading reading) {
         SmartSensor smartSensor = dataStore.getSensor(sensorId);
         if (smartSensor == null) {
-            throw new NotFoundException("SmartSensor not found");
+            throw new NotFoundException("Sensor not found: " + sensorId);
         }
-        if (smartSensor.getStatus() != null && smartSensor.getStatus().equalsIgnoreCase("OFFLINE")) {
-            throw new SensorUnavailableException("SmartSensor is OFFLINE and cannot accept readings");
+        // Spec: MAINTENANCE sensors are physically disconnected — block with 403
+        if ("MAINTENANCE".equalsIgnoreCase(smartSensor.getStatus())) {
+            throw new SensorUnavailableException(
+                "Sensor '" + sensorId + "' is currently in MAINTENANCE mode and cannot accept new readings. " +
+                "Please wait until the sensor is back ACTIVE.");
+        }
+        // Also block OFFLINE sensors
+        if ("OFFLINE".equalsIgnoreCase(smartSensor.getStatus())) {
+            throw new SensorUnavailableException(
+                "Sensor '" + sensorId + "' is OFFLINE and cannot accept new readings.");
         }
         if (reading == null || reading.getId() == null || reading.getId().trim().isEmpty()) {
             throw new BadRequestException("Reading id is required");
         }
+        // Persist the reading
         dataStore.addReading(sensorId, reading);
+        // Side effect: update parent sensor's currentValue for data consistency
         smartSensor.setCurrentValue(reading.getValue());
         dataStore.upsertSensor(smartSensor);
         return Response.created(URI.create("/api/v1/sensors/" + sensorId + "/readings/" + reading.getId()))
